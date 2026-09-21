@@ -14,7 +14,9 @@ android {
 
     defaultConfig {
         applicationId = "com.juthing.idle"
-        minSdk = 29
+        // Android 11: LocationManager.getCurrentLocation, which is how Idle reads a position
+        // once without ever subscribing to updates.
+        minSdk = 30
         // Adopted now rather than retrofitted later: nothing in the app yet relies on legacy
         // behaviour, and Google Play requires 36 or higher in any case.
         targetSdk = 37
@@ -80,6 +82,12 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.zxing.core)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

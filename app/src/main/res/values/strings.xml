@@ -72,4 +72,46 @@
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="theme_system">Follow the system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_blocking">Blocking</string>
+    <string name="settings_unlock_duration">Unlock duration</string>
+    <string name="settings_unlock_duration_summary">How long an app stays usable after an unlock.</string>
+    <string name="settings_unlock_duration_locked">Locked while a rule is running.</string>
+    <string name="settings_unlock_methods">Unlock methods</string>
+    <string name="settings_unlock_methods_summary">QR codes, NFC tags and places that lift a block.</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_summary">Free, no ads, no tracking. Nothing leaves your device.</string>
+
+    <!-- Unlock methods -->
+    <string name="unlock_methods_title">Unlock methods</string>
+    <string name="unlock_methods_empty_title">No methods yet</string>
+    <string name="unlock_methods_empty_body">A method is what lifts a block: a QR code on the fridge, a tag on your desk, or a place you have to walk to.</string>
+    <string name="unlock_methods_add">New method</string>
+    <string name="unlock_method_in_use">Used by a rule</string>
+    <string name="unlock_type_qr">QR code or barcode</string>
+    <string name="unlock_type_qr_summary">Scan a code to register it, scan it again to unlock.</string>
+    <string name="unlock_type_nfc">NFC tag</string>
+    <string name="unlock_type_nfc_summary">Tap a tag to register it, tap it again to unlock.</string>
+    <string name="unlock_type_location">Place</string>
+    <string name="unlock_type_location_summary">Unlocking only works inside an area you choose.</string>
+    <string name="new_method_title">New method</string>
+    <string name="method_name_label">Name</string>
+    <string name="method_name_placeholder">QR on the fridge</string>
+    <string name="method_capture_qr">Point the camera at the code</string>
+    <string name="method_capture_qr_done">Code registered</string>
+    <string name="method_capture_nfc">Hold the tag against the back of your phone</string>
+    <string name="method_capture_nfc_done">Tag registered</string>
+    <string name="method_capture_location">Register this place</string>
+    <string name="method_capture_location_done">Place registered</string>
+    <string name="method_radius">Radius: %1$d m</string>
+    <string name="method_locating">Finding your position…</string>
+    <string name="permission_camera_rationale">Idle needs the camera to read the code. The image is never stored and never leaves your phone.</string>
+    <string name="permission_location_rationale">Idle needs your position once, to record the place. It is stored on your phone and never sent anywhere.</string>
+    <string name="permission_grant">Allow</string>
+    <string name="permission_denied">Permission refused. You can grant it in Android settings.</string>
+    <string name="nfc_unavailable">This phone has no NFC chip.</string>
+    <string name="nfc_disabled">NFC is off. Turn it on in Android settings.</string>
 </resources>

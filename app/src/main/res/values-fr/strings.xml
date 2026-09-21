@@ -74,4 +74,46 @@
 
     <!-- Réglages -->
     <string name="settings_title">Réglages</string>
+    <string name="settings_appearance">Apparence</string>
+    <string name="theme_system">Suivre le système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="settings_blocking">Blocage</string>
+    <string name="settings_unlock_duration">Durée de déverrouillage</string>
+    <string name="settings_unlock_duration_summary">Temps pendant lequel une application reste utilisable après un déverrouillage.</string>
+    <string name="settings_unlock_duration_locked">Verrouillé tant qu\'une règle est en cours.</string>
+    <string name="settings_unlock_methods">Méthodes de déverrouillage</string>
+    <string name="settings_unlock_methods_summary">Codes QR, tags NFC et lieux qui lèvent un blocage.</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_about_summary">Gratuit, sans publicité, sans suivi. Rien ne quitte votre téléphone.</string>
+
+    <!-- Méthodes de déverrouillage -->
+    <string name="unlock_methods_title">Méthodes de déverrouillage</string>
+    <string name="unlock_methods_empty_title">Aucune méthode</string>
+    <string name="unlock_methods_empty_body">Une méthode est ce qui lève un blocage : un QR code sur le frigo, un tag sur le bureau, ou un lieu où il faut se rendre.</string>
+    <string name="unlock_methods_add">Nouvelle méthode</string>
+    <string name="unlock_method_in_use">Utilisée par une règle</string>
+    <string name="unlock_type_qr">QR code ou code-barres</string>
+    <string name="unlock_type_qr_summary">Scannez un code pour l\'enregistrer, rescannez-le pour déverrouiller.</string>
+    <string name="unlock_type_nfc">Tag NFC</string>
+    <string name="unlock_type_nfc_summary">Approchez un tag pour l\'enregistrer, réapprochez-le pour déverrouiller.</string>
+    <string name="unlock_type_location">Lieu</string>
+    <string name="unlock_type_location_summary">Le déverrouillage n\'est possible que dans une zone que vous choisissez.</string>
+    <string name="new_method_title">Nouvelle méthode</string>
+    <string name="method_name_label">Nom</string>
+    <string name="method_name_placeholder">QR sur le frigo</string>
+    <string name="method_capture_qr">Visez le code avec la caméra</string>
+    <string name="method_capture_qr_done">Code enregistré</string>
+    <string name="method_capture_nfc">Maintenez le tag contre le dos du téléphone</string>
+    <string name="method_capture_nfc_done">Tag enregistré</string>
+    <string name="method_capture_location">Enregistrer ce lieu</string>
+    <string name="method_capture_location_done">Lieu enregistré</string>
+    <string name="method_radius">Rayon : %1$d m</string>
+    <string name="method_locating">Recherche de votre position…</string>
+    <string name="permission_camera_rationale">Idle a besoin de la caméra pour lire le code. L\'image n\'est jamais enregistrée et ne quitte jamais votre téléphone.</string>
+    <string name="permission_location_rationale">Idle a besoin de votre position une seule fois, pour enregistrer le lieu. Elle reste sur votre téléphone et n\'est envoyée nulle part.</string>
+    <string name="permission_grant">Autoriser</string>
+    <string name="permission_denied">Permission refusée. Vous pouvez l\'accorder dans les réglages Android.</string>
+    <string name="nfc_unavailable">Ce téléphone n\'a pas de puce NFC.</string>
+    <string name="nfc_disabled">Le NFC est désactivé. Activez-le dans les réglages Android.</string>
 </resources>

@@ -32,6 +32,14 @@ data object SettingsRoute
 @Serializable
 data class RuleEditRoute(val ruleId: Long = 0, val isPeriod: Boolean)
 
+/** The list of unlock methods, reached from the settings tab. */
+@Serializable
+data object UnlockMethodsRoute
+
+/** The screen that registers a new unlock method. */
+@Serializable
+data object CreateMethodRoute
+
 /**
  * A tab of the bottom navigation bar.
  *

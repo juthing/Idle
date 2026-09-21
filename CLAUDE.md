@@ -48,7 +48,10 @@ une zone précise.
 | CameraX + ZXing | 1.6.2 / 3.5.4 | scan des QR codes et codes-barres |
 | Navigation Compose | 2.10.1 | navigation type-safe (kotlinx.serialization) |
 
-`minSdk` 29 · `compileSdk` 37.2 · `targetSdk` 37.
+`minSdk` 30 (Android 11) · `compileSdk` 37.2 · `targetSdk` 37.
+
+`minSdk` 30 parce que `LocationManager.getCurrentLocation` y apparaît : c'est l'API qui lit une
+position une seule fois, sans jamais s'abonner aux mises à jour ni poser de geofence.
 
 Les versions des plugins Kotlin sont alignées sur le compilateur qu'embarque AGP 9.4. Un plugin
 plus récent que le compilateur serait une incompatibilité silencieuse, donc l'avertissement
@@ -99,6 +102,17 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
   navigation obligerait à renvoyer un résultat et risquerait de perdre le brouillon en cours.
 - **Idle ne peut pas se bloquer elle-même** — l'app est filtrée du sélecteur : la bloquer
   enfermerait l'utilisateur hors du seul écran d'où un blocage peut être levé.
+- **`LocationManager` plutôt que le fused provider** — même raison que ZXing : pas de dépendance
+  aux Google Play Services. La position n'est lue qu'à la demande, jamais en abonnement et jamais
+  via une geofence, donc Idle ne peut pas suivre l'utilisateur en arrière-plan.
+- **NFC en reader mode** — la lecture reste liée à l'écran qui l'a demandée et s'arrête dès qu'il
+  disparaît, donc Idle n'intercepte jamais un tag destiné à une autre app. Seul l'identifiant
+  matériel est lu : Idle n'écrit jamais sur un tag et n'en lit jamais le contenu.
+- **La durée de déverrouillage est gelée dès qu'une règle est active** — sinon il suffirait de la
+  passer de 15 minutes à une heure en pleine période pour contourner toutes les règles.
+- **Permissions demandées en contexte** — la caméra au moment de scanner, la position au moment
+  d'enregistrer un lieu, avec la raison affichée juste à côté du bouton. Une demande hors contexte
+  est une demande refusée.
 
 ## Conventions
 
@@ -163,7 +177,7 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 1 — couche data (Room, DataStore, repositories)
 - [x] Étape 2 — couche domain et tests unitaires
 - [x] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
-- [ ] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
+- [x] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
 - [ ] Étape 5 — moteur de blocage et mode urgence
 - [ ] Étape 6 — onboarding et permissions
 - [ ] Étape 7 — workers, verrouillage de l'édition, finitions

@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
+        Each permission serves exactly one unlock method and is requested when that method is
+        created, not at first launch. The matching features are declared optional so that a device
+        without a camera or an NFC chip can still install Idle and use the other methods.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+
+    <!--
         Idle needs to list the apps the user can launch, so that they can pick which ones a rule
         covers. This intent filter is the narrow alternative to QUERY_ALL_PACKAGES, which Google
         Play treats as a sensitive permission and which Idle does not need.

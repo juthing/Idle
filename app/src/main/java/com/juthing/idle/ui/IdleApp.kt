@@ -17,24 +17,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.juthing.idle.data.system.NfcTagReader
+import com.juthing.idle.ui.navigation.CreateMethodRoute
 import com.juthing.idle.ui.navigation.PeriodsRoute
 import com.juthing.idle.ui.navigation.RuleEditRoute
 import com.juthing.idle.ui.navigation.SettingsRoute
 import com.juthing.idle.ui.navigation.TimersRoute
 import com.juthing.idle.ui.navigation.TopLevelDestination
+import com.juthing.idle.ui.navigation.UnlockMethodsRoute
 import com.juthing.idle.ui.periods.PeriodsScreen
 import com.juthing.idle.ui.ruleedit.RuleEditScreen
 import com.juthing.idle.ui.settings.SettingsScreen
 import com.juthing.idle.ui.timers.TimersScreen
+import com.juthing.idle.ui.unlockmethods.CreateMethodScreen
+import com.juthing.idle.ui.unlockmethods.UnlockMethodsScreen
 
 /**
  * Hosts the three top-level sections behind a bottom navigation bar.
  *
  * Switching tabs never grows the back stack: each tab is restored to the state it was
  * left in, and the system back button always returns to the Periods tab.
+ *
+ * @param nfcTagReader passed down rather than injected where it is used: reader mode binds to the
+ *   hosting activity, so the single instance has to be the one the activity knows about.
  */
 @Composable
 fun IdleApp(
+    nfcTagReader: NfcTagReader,
     navController: NavHostController = rememberNavController(),
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -84,7 +93,23 @@ fun IdleApp(
                     },
                 )
             }
-            composable<SettingsRoute> { SettingsScreen() }
+            composable<SettingsRoute> {
+                SettingsScreen(
+                    onOpenUnlockMethods = { navController.navigate(UnlockMethodsRoute) },
+                )
+            }
+            composable<UnlockMethodsRoute> {
+                UnlockMethodsScreen(
+                    onBack = { navController.popBackStack() },
+                    onCreate = { navController.navigate(CreateMethodRoute) },
+                )
+            }
+            composable<CreateMethodRoute> {
+                CreateMethodScreen(
+                    nfcTagReader = nfcTagReader,
+                    onClose = { navController.popBackStack() },
+                )
+            }
             composable<RuleEditRoute> {
                 RuleEditScreen(onClose = { navController.popBackStack() })
             }
