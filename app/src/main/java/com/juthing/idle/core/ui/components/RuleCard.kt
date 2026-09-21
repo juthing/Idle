@@ -18,7 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import com.juthing.idle.core.ui.tap
+import com.juthing.idle.core.ui.toggle
 
 /**
  * One rule in a list: its name, a line describing when it applies, and the apps it covers.
@@ -38,10 +41,15 @@ fun RuleCard(
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit)? = null,
 ) {
+    val haptics = LocalHapticFeedback.current
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable {
+                haptics.tap()
+                onClick()
+            },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
@@ -69,7 +77,13 @@ fun RuleCard(
                         modifier = Modifier.size(20.dp),
                     )
                 } else {
-                    Switch(checked = enabled, onCheckedChange = onEnabledChange)
+                    Switch(
+                        checked = enabled,
+                        onCheckedChange = {
+                            haptics.toggle(it)
+                            onEnabledChange(it)
+                        },
+                    )
                 }
             }
 

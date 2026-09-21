@@ -37,16 +37,14 @@ class BlockActivity : ComponentActivity() {
     @Inject
     lateinit var nfcTagReader: NfcTagReader
 
+    /** The app this screen is currently blocking, kept so that [onResume] re-checks the right one. */
+    private var blockedPackage: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val packageName = intent.getStringExtra(EXTRA_PACKAGE)
-        if (packageName == null) {
-            finish()
-            return
-        }
-        viewModel.start(packageName)
+        if (!adopt(intent)) return
 
         setContent {
             val themeMode by themeViewModel.themeMode.collectAsStateWithLifecycle()
@@ -67,6 +65,19 @@ class BlockActivity : ComponentActivity() {
     }
 
     /**
+     * Takes over for a second app while the screen is already up.
+     *
+     * The activity is `singleTask`, so opening another blocked app delivers a new intent here
+     * instead of creating a second instance. Reading it is what keeps the screen from insisting
+     * on the app the user has already left.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        adopt(intent)
+    }
+
+    /**
      * Re-checks the block when the screen comes back to the foreground.
      *
      * The user may have unlocked from elsewhere, or the period may have ended while they were
@@ -74,7 +85,30 @@ class BlockActivity : ComponentActivity() {
      */
     override fun onResume() {
         super.onResume()
-        intent.getStringExtra(EXTRA_PACKAGE)?.let(viewModel::start)
+        blockedPackage?.let(viewModel::start)
+    }
+
+    /**
+     * Leaves nothing behind once the screen is no longer in front.
+     *
+     * The block screen is a moment, not a place: a stale instance sitting in the back stack would
+     * come back on its own the next time the task was resumed.
+     */
+    override fun onStop() {
+        super.onStop()
+        if (!isChangingConfigurations) finish()
+    }
+
+    /** @return whether the intent named an app to block; the screen has no reason to exist if not. */
+    private fun adopt(intent: Intent): Boolean {
+        val packageName = intent.getStringExtra(EXTRA_PACKAGE)
+        if (packageName == null) {
+            finish()
+            return false
+        }
+        blockedPackage = packageName
+        viewModel.start(packageName)
+        return true
     }
 
     private fun goHome() {

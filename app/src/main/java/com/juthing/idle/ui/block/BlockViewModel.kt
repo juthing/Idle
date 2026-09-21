@@ -32,6 +32,9 @@ import javax.inject.Inject
  * @property failure the last refused attempt, so the screen can say what went wrong instead of
  *   silently doing nothing.
  * @property dismissed set once the app may be used, which closes the screen.
+ * @property unlocked set only when the block was actually lifted by the user, as opposed to
+ *   having quietly expired. The screen lingers on a confirmation for the first and not the
+ *   second: there is nothing to celebrate about a period that simply ended.
  */
 data class BlockUiState(
     val packageName: String = "",
@@ -43,6 +46,7 @@ data class BlockUiState(
     val failure: UnlockFailure? = null,
     val checkingPosition: Boolean = false,
     val dismissed: Boolean = false,
+    val unlocked: Boolean = false,
     val loading: Boolean = true,
 )
 
@@ -68,8 +72,14 @@ class BlockViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BlockUiState())
     val uiState: StateFlow<BlockUiState> = _uiState.asStateFlow()
 
-    /** Loads everything the screen needs for [packageName]. */
+    /**
+     * Loads everything the screen needs for [packageName].
+     *
+     * Ignored once the block has been lifted: the activity re-checks on every resume, and a
+     * reload at that moment would wipe the confirmation the user has just earned.
+     */
     fun start(packageName: String) {
+        if (_uiState.value.unlocked) return
         viewModelScope.launch {
             val decision = evaluateBlock(packageName)
             val reason = (decision as? BlockDecision.Blocked)?.reason
@@ -118,6 +128,7 @@ class BlockViewModel @Inject constructor(
 
     private fun attempt(attempt: UnlockAttempt) {
         val state = _uiState.value
+        if (state.unlocked) return
         val method = state.method ?: return
         val rule = state.reason?.rule ?: return
 
@@ -125,7 +136,7 @@ class BlockViewModel @Inject constructor(
             when (val result = validateUnlock(method, attempt)) {
                 is UnlockResult.Success -> {
                     grantUnlock(ruleId = rule.id, packageName = state.packageName)
-                    _uiState.update { it.copy(failure = null, dismissed = true) }
+                    _uiState.update { it.copy(failure = null, dismissed = true, unlocked = true) }
                 }
 
                 is UnlockResult.Failure -> _uiState.update { it.copy(failure = result.reason) }
@@ -144,7 +155,7 @@ class BlockViewModel @Inject constructor(
         val packageName = _uiState.value.packageName
         viewModelScope.launch {
             val granted = emergencyUnlock(packageName)
-            if (granted > 0) _uiState.update { it.copy(dismissed = true) }
+            if (granted > 0) _uiState.update { it.copy(dismissed = true, unlocked = true) }
         }
     }
 }

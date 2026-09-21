@@ -30,6 +30,7 @@ une zone précise.
 | Mode urgence | 5 min par jour au total, toutes apps confondues, fractionnable, **non configurable**, remis à zéro à minuit |
 | Anti-contournement | Les règles restent consultables mais non modifiables tant qu'elles sont actives. Modifier, supprimer ou désactiver une règle active exige son déverrouillage. La durée globale de déverrouillage est verrouillée dès qu'une règle est active. |
 | Réglages système | Idle ne bloque pas l'accès aux Réglages Android. L'utilisateur reste maître de son appareil. |
+| Déverrouiller une règle | Depuis l'app, via la méthode de la règle. La levée porte sur la règle (droit de la modifier), pas sur ses apps. |
 | Langues | Anglais (`values/`) et français (`values-fr/`), rien d'autre |
 
 ## Stack
@@ -68,7 +69,7 @@ com.juthing.idle
 ├── core/        transverse : horloge injectable, thème, composants UI partagés
 ├── data/        Room, DataStore, sources système, mappers, implémentations des repositories
 ├── domain/      modèles, interfaces de repository, use cases — aucune dépendance Android
-├── blocking/    AccessibilityService, coordinateur de blocage, foreground service, workers
+├── blocking/    AccessibilityService, coordinateur de blocage, notifications, workers
 └── ui/          un package par écran : Composable + ViewModel + UiState
 ```
 
@@ -80,8 +81,24 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
 - **AccessibilityService plutôt que du polling** — c'est la seule API qui notifie du changement
   d'app au premier plan en temps réel. `UsageStatsManager` mesure les durées mais ne réagit pas
   assez vite pour bloquer une ouverture d'app.
-- **Foreground Service pour le décompte** — WorkManager n'offre aucune garantie de ponctualité ;
-  il ne sert donc qu'au reset de minuit et à la purge de l'historique, jamais au blocage.
+- **`SYSTEM_ALERT_WINDOW` est indispensable, pas un confort** — Android interdit à une app de
+  lancer une activité depuis l'arrière-plan, et faire tourner un service d'accessibilité ne figure
+  pas dans la liste des exemptions ; « superposition à d'autres applications » y figure. Sans
+  cette permission, le système jette le lancement de l'écran de blocage sans erreur ni journal, et
+  l'app paraît marcher par intermittence — elle ne marche en réalité que pendant le court délai de
+  grâce qui suit un passage au premier plan. Idle ne dessine jamais de fenêtre de superposition :
+  la permission n'est détenue que pour cette exemption, et son absence est signalée à l'instant où
+  elle fait échouer un blocage.
+- **Le décompte vit dans le coordinateur, pas dans un service** — depuis Android 12, une app dont
+  la seule présence de premier plan est un service d'accessibilité se voit souvent refuser le
+  démarrage d'un foreground service ; le décompte ne partait donc jamais. Le service
+  d'accessibilité étant lié par le système, le process est déjà maintenu en vie : une simple
+  coroutine est plus simple et plus fiable qu'un service qui ne démarre pas. La notification
+  persistante reste, parce que du temps ne doit pas être décompté sans que l'utilisateur puisse le
+  voir — mais plus rien ne dépend d'elle.
+- **Le décompte s'arrête à l'extinction de l'écran** — aucun événement d'accessibilité ne
+  l'annonce, donc le service écoute `ACTION_SCREEN_OFF`. Sans cela, une app minutée laissée
+  ouverte consommait son quota dans une poche.
 - **ZXing plutôt que ML Kit** — ML Kit dépend des Google Play Services. ZXing garde l'app
   utilisable sur un appareil dégooglisé, ce qui est cohérent avec la philosophie du projet.
 - **Kotlin intégré à AGP** (`android.builtInKotlin=true`) — ce n'est pas un choix : le nouveau DSL
@@ -124,8 +141,11 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
 - **La réconciliation garde le plus grand des deux compteurs** — sous-compter rendrait du temps
   déjà consommé, ce que le quota est précisément censé empêcher ; sur-compter termine juste une
   session un peu tôt.
-- **`specialUse` est le type honnête du foreground service** — Idle ne lit pas de média, ne suit
-  pas de position et ne synchronise rien.
+- **Pas de carte en ligne pour choisir un lieu** — Idle ne déclare pas `INTERNET`, donc il n'y a
+  pas de tuiles à afficher et il n'y en aura pas : un sélecteur qui dépendrait d'un serveur de
+  tuiles échangerait la promesse centrale de l'app contre un plus bel écran. Le sélecteur dessine
+  ce qui compte réellement ici — distance et direction entre le téléphone et le point choisi, avec
+  le rayon tracé à l'échelle — et le point se place au doigt.
 - **Aucune permission n'est obligatoire pour terminer l'onboarding** — refuser le service
   d'accessibilité laisse une app fonctionnelle pour tout le reste, et l'écran Réglages continue de
   dire ce qui manque plutôt que de retenir l'utilisateur en otage sur l'onboarding.
@@ -218,3 +238,6 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 5 — moteur de blocage et mode urgence
 - [x] Étape 6 — onboarding et permissions
 - [x] Étape 7 — workers, verrouillage de l'édition, finitions
+- [x] Étape 8 — correction du blocage (superposition, décompte hors service), déverrouillage
+      depuis l'app, réglages en sous-pages, retour haptique, refonte de l'écran de blocage et des
+      écrans de capture

@@ -16,7 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
@@ -38,7 +37,12 @@ data class RuleEditUiState(
     val loading: Boolean = true,
     val locked: Boolean = false,
     val saved: Boolean = false,
+    val ruleId: Long = 0,
     val name: String = "",
+    /** Kept so that saving an edit does not quietly switch a disabled rule back on. */
+    val enabled: Boolean = true,
+    /** Kept so that saving an edit does not reset the rule's age and reorder the list. */
+    val createdAt: Long = 0,
     val packageNames: Set<String> = emptySet(),
     val unlockMethodId: Long? = null,
     val daysOfWeek: Set<DayOfWeek> = DayOfWeek.entries.toSet(),
@@ -50,6 +54,10 @@ data class RuleEditUiState(
 ) {
     /** A period whose end is not after its start runs overnight. */
     val crossesMidnight: Boolean get() = endMinute <= startMinute
+
+    /** The method currently guarding this rule, if one is chosen and still exists. */
+    val selectedMethod: UnlockMethod?
+        get() = availableMethods.firstOrNull { it.id == unlockMethodId }
 
     /**
      * Whether the rule can be written.
@@ -74,32 +82,44 @@ class RuleEditViewModel @Inject constructor(
     private val route: RuleEditRoute = savedStateHandle.toRoute()
 
     private val _uiState = MutableStateFlow(
-        RuleEditUiState(isPeriod = route.isPeriod, isNew = route.ruleId == 0L),
+        RuleEditUiState(
+            isPeriod = route.isPeriod,
+            isNew = route.ruleId == 0L,
+            ruleId = route.ruleId,
+        ),
     )
     val uiState: StateFlow<RuleEditUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch { load() }
+        // Observed rather than read once: a method can be created from the sheet on this very
+        // screen, and the list has to grow under the user without the draft being rebuilt.
+        viewModelScope.launch {
+            unlockMethodRepository.observeAll().collect { methods ->
+                _uiState.update { state ->
+                    state.copy(
+                        availableMethods = methods,
+                        // With exactly one method there is nothing to choose, so it is preselected.
+                        unlockMethodId = state.unlockMethodId ?: methods.singleOrNull()?.id,
+                    )
+                }
+            }
+        }
     }
 
     private suspend fun load() {
         val apps = installedAppsRepository.getLaunchableApps()
-        val methods = unlockMethodRepository.observeAll().first()
         val existing = if (route.ruleId != 0L) ruleRepository.getRule(route.ruleId) else null
 
         _uiState.update { state ->
-            val base = state.copy(
-                loading = false,
-                installedApps = apps,
-                availableMethods = methods,
-                // With exactly one method there is nothing to choose, so it is preselected.
-                unlockMethodId = state.unlockMethodId ?: methods.singleOrNull()?.id,
-            )
+            val base = state.copy(loading = false, installedApps = apps)
             when (existing) {
                 null -> base
                 is Rule.Period -> base.copy(
                     locked = !canEditRule(existing),
                     name = existing.name,
+                    enabled = existing.enabled,
+                    createdAt = existing.createdAt,
                     packageNames = existing.packageNames,
                     unlockMethodId = existing.unlockMethodId,
                     daysOfWeek = existing.daysOfWeek,
@@ -110,6 +130,8 @@ class RuleEditViewModel @Inject constructor(
                 is Rule.Timer -> base.copy(
                     locked = !canEditRule(existing),
                     name = existing.name,
+                    enabled = existing.enabled,
+                    createdAt = existing.createdAt,
                     packageNames = existing.packageNames,
                     unlockMethodId = existing.unlockMethodId,
                     dailyLimitMinutes = existing.dailyLimitMinutes,
@@ -117,6 +139,25 @@ class RuleEditViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Re-reads whether the rule is still sealed.
+     *
+     * Called when the screen comes back to the foreground, which is how it learns that the user
+     * has just unlocked the rule from the screen next door — or that the period it was waiting
+     * out has ended on its own.
+     */
+    fun refreshLock() {
+        val ruleId = route.ruleId
+        if (ruleId == 0L) return
+        viewModelScope.launch {
+            val rule = ruleRepository.getRule(ruleId) ?: return@launch
+            _uiState.update { it.copy(locked = !canEditRule(rule)) }
+        }
+    }
+
+    /** Adopts a method the user has just created from the picker sheet. */
+    fun adoptMethod(id: Long) = _uiState.update { it.copy(unlockMethodId = id) }
 
     fun setName(name: String) = _uiState.update { it.copy(name = name) }
 
@@ -136,7 +177,7 @@ class RuleEditViewModel @Inject constructor(
     fun setEndMinute(minute: Int) = _uiState.update { it.copy(endMinute = minute) }
 
     fun setDailyLimitMinutes(minutes: Int) =
-        _uiState.update { it.copy(dailyLimitMinutes = minutes.coerceAtLeast(1)) }
+        _uiState.update { it.copy(dailyLimitMinutes = minutes.coerceIn(5, 8 * 60)) }
 
     /** Writes the rule and signals the screen to close. */
     fun save() {
@@ -157,6 +198,8 @@ class RuleEditViewModel @Inject constructor(
                     name = name,
                     packageNames = state.packageNames,
                     unlockMethodId = unlockMethodId,
+                    enabled = state.enabled,
+                    createdAt = state.createdAt,
                     daysOfWeek = state.daysOfWeek,
                     startMinute = state.startMinute,
                     endMinute = state.endMinute,
@@ -167,6 +210,8 @@ class RuleEditViewModel @Inject constructor(
                     name = name,
                     packageNames = state.packageNames,
                     unlockMethodId = unlockMethodId,
+                    enabled = state.enabled,
+                    createdAt = state.createdAt,
                     dailyLimitMinutes = state.dailyLimitMinutes,
                 )
             }

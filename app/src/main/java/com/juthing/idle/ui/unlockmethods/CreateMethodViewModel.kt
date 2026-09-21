@@ -25,18 +25,24 @@ private const val DEFAULT_RADIUS_METERS = 100
  *
  * @property capturedSecret the hash of what was scanned or tapped. Only the hash is ever held,
  *   even in memory, so the payload cannot leak through a state dump.
- * @property saved flipped once the method is written, which tells the screen to close.
+ * @property anchorLatitude where the device actually is, kept apart from the chosen point so the
+ *   picker can draw one relative to the other.
+ * @property savedMethodId set once the method is written; the screen hands it back to whoever
+ *   opened it and closes.
  */
 data class CreateMethodUiState(
     val type: UnlockMethodType? = null,
     val name: String = "",
     val capturedSecret: String? = null,
+    val anchorLatitude: Double? = null,
+    val anchorLongitude: Double? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
     val radiusMeters: Int = DEFAULT_RADIUS_METERS,
     val locating: Boolean = false,
+    val locationFailed: Boolean = false,
     val nfcAvailability: NfcAvailability = NfcAvailability.UNSUPPORTED,
-    val saved: Boolean = false,
+    val savedMethodId: Long? = null,
 ) {
     /** A method is complete once it has a name and something to check an attempt against. */
     val canSave: Boolean
@@ -62,37 +68,65 @@ class CreateMethodViewModel @Inject constructor(
         it.copy(type = type, nfcAvailability = nfcTagReader.availability())
     }
 
+    /** Goes back to the list of kinds, so a wrong turn costs one tap rather than a whole screen. */
+    fun clearType() = _uiState.update { CreateMethodUiState() }
+
     fun setName(name: String) = _uiState.update { it.copy(name = name) }
 
     fun setRadius(meters: Int) = _uiState.update { it.copy(radiusMeters = meters) }
 
     /** Records a scanned code or a tapped tag, hashed immediately. */
     fun capture(payload: String) = _uiState.update {
-        it.copy(capturedSecret = SecretHasher.hash(payload))
+        if (it.capturedSecret != null) it else it.copy(capturedSecret = SecretHasher.hash(payload))
     }
 
-    /** Reads the device position once and keeps it as the centre of the area. */
+    /** Clears a capture so the user can present something else without starting over. */
+    fun recapture() = _uiState.update { it.copy(capturedSecret = null) }
+
+    /**
+     * Reads the device position once and uses it as both the reference point and the first guess.
+     *
+     * The reference never moves afterwards: it is where the phone was standing, and the picker
+     * draws every chosen point as a distance and a bearing from it.
+     */
     fun captureCurrentPlace() {
-        _uiState.update { it.copy(locating = true) }
+        _uiState.update { it.copy(locating = true, locationFailed = false) }
         viewModelScope.launch {
             val fix = locationProvider.currentPosition()
             _uiState.update { state ->
-                state.copy(
-                    locating = false,
-                    latitude = fix?.latitude ?: state.latitude,
-                    longitude = fix?.longitude ?: state.longitude,
-                )
+                if (fix == null) {
+                    state.copy(locating = false, locationFailed = true)
+                } else {
+                    state.copy(
+                        locating = false,
+                        locationFailed = false,
+                        anchorLatitude = fix.latitude,
+                        anchorLongitude = fix.longitude,
+                        latitude = state.latitude ?: fix.latitude,
+                        longitude = state.longitude ?: fix.longitude,
+                    )
+                }
             }
         }
+    }
+
+    /** Moves the centre of the area to a point the user picked by hand. */
+    fun moveTo(latitude: Double, longitude: Double) = _uiState.update {
+        it.copy(latitude = latitude, longitude = longitude)
+    }
+
+    /** Puts the chosen point back on the device's own position. */
+    fun recentre() = _uiState.update {
+        it.copy(latitude = it.anchorLatitude, longitude = it.anchorLongitude)
     }
 
     fun save() {
         val state = _uiState.value
         val type = state.type
-        if (!state.canSave || type == null) return
+        if (!state.canSave || type == null || state.savedMethodId != null) return
 
         viewModelScope.launch {
-            repository.save(
+            val id = repository.save(
                 UnlockMethod(
                     name = state.name.trim(),
                     type = type,
@@ -102,7 +136,7 @@ class CreateMethodViewModel @Inject constructor(
                     radiusMeters = state.radiusMeters.takeIf { type == UnlockMethodType.LOCATION },
                 ),
             )
-            _uiState.update { it.copy(saved = true) }
+            _uiState.update { it.copy(savedMethodId = id) }
         }
     }
 }

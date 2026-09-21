@@ -15,10 +15,19 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
+    <!--
+        Idle has to put its block screen in front of the app the user just opened. Android only
+        allows an app to start an activity from the background under a short list of exemptions,
+        and running an accessibility service is not one of them — this permission is. Without it
+        the system drops the launch without a word and the app looks broken.
+
+        Idle never draws an actual overlay window: the permission is held solely for that
+        exemption, and the user grants it by hand in Android settings.
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -61,29 +70,18 @@
         </activity>
 
         <!--
-            The block screen. excludeFromRecents and noHistory keep it out of the recents list:
-            it is an interruption, not a place the user navigates back to.
+            The block screen. excludeFromRecents keeps it out of the recents list: it is an
+            interruption, not a place the user navigates back to. It finishes itself when it
+            stops, rather than relying on noHistory, which does not survive being re-launched for
+            a second app while the first instance is still finishing.
         -->
         <activity
             android:name=".blocking.BlockActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask"
-            android:noHistory="true"
+            android:taskAffinity=".blocking"
             android:theme="@style/Theme.Idle" />
-
-        <!--
-            Counts time only while a timed app is in the foreground. The specialUse type is the
-            honest one: Idle is not playing media, tracking location or syncing data.
-        -->
-        <service
-            android:name=".blocking.TimerCountingService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Counts foreground time for the daily app limits the user set, so a limit takes effect the moment it is reached." />
-        </service>
 
         <!--
             Idle provides its own WorkManager configuration so that workers can be injected, so

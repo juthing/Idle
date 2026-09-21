@@ -12,7 +12,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_back">Back</string>
     <string name="action_done">Done</string>
-    <string name="rule_locked">Locked while this rule is running. Unlock it to make changes.</string>
+    <string name="action_cancel">Cancel</string>
     <plurals name="app_count">
         <item quantity="one">%d app</item>
         <item quantity="other">%d apps</item>
@@ -26,17 +26,22 @@
     <string name="rule_apps_none">Choose apps</string>
     <string name="rule_unlock_label">Unlock method</string>
     <string name="rule_unlock_none">Choose a method</string>
-    <string name="rule_unlock_required">Every rule needs an unlock method. Create one in Settings first.</string>
-    <string name="rule_days_label">Days</string>
+    <string name="rule_unlock_none_yet">You have no method yet. Create one below.</string>
+    <string name="rule_when_label">When</string>
     <string name="rule_start_label">From</string>
     <string name="rule_end_label">To</string>
     <string name="rule_crosses_midnight">Runs overnight, into the next morning.</string>
     <string name="rule_limit_label">Daily limit</string>
-    <string name="rule_limit_value">%1$s per day</string>
     <string name="new_period_title">New period</string>
     <string name="edit_period_title">Edit period</string>
     <string name="new_timer_title">New timer</string>
     <string name="edit_timer_title">Edit timer</string>
+    <string name="rule_locked_title">This rule is running</string>
+    <string name="rule_locked">You can read it, but changing, disabling or deleting it means going through its unlock method first.</string>
+    <string name="rule_unlock_to_edit">Unlock to edit</string>
+    <string name="rule_unlocked_for">Unlocked. You can edit this rule for the next %1$d minutes.</string>
+    <string name="rule_delete_title">Delete this rule?</string>
+    <string name="rule_delete_body">The apps it covers stop being blocked straight away. This cannot be undone.</string>
 
     <!-- App picker -->
     <string name="app_picker_title">Choose apps</string>
@@ -73,17 +78,33 @@
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
+    <string name="settings_appearance_summary">Colours come from your wallpaper on Android 12 and later, so Idle looks like the rest of your phone.</string>
     <string name="theme_system">Follow the system</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="settings_blocking">Blocking</string>
+    <string name="settings_blocking_note">Neither setting on this page can be changed while a rule is running. That is the point of them.</string>
+    <string name="settings_blocking_broken_title">Nothing is being blocked</string>
+    <string name="settings_blocking_broken_body">Idle is missing something it needs from Android. Tap to see what.</string>
     <string name="settings_unlock_duration">Unlock duration</string>
     <string name="settings_unlock_duration_summary">How long an app stays usable after an unlock.</string>
     <string name="settings_unlock_duration_locked">Locked while a rule is running.</string>
     <string name="settings_unlock_methods">Unlock methods</string>
     <string name="settings_unlock_methods_summary">QR codes, NFC tags and places that lift a block.</string>
+    <string name="settings_emergency">Emergency time</string>
+    <string name="settings_emergency_summary">A day\'s worth of unlocks that need no code, no tag and no trip. Shared by every app, and not configurable — a budget you could raise would be the simplest way around every rule you set.</string>
     <string name="settings_about">About</string>
-    <string name="settings_about_summary">Free, no ads, no tracking. Nothing leaves your device.</string>
+
+    <!-- About -->
+    <string name="about_free_title">Free</string>
+    <string name="about_free_body">Every feature, no purchases, no subscription.</string>
+    <string name="about_ads_title">No ads</string>
+    <string name="about_ads_body">There is no ad code in the app at all.</string>
+    <string name="about_tracking_title">No tracking</string>
+    <string name="about_tracking_body">No analytics, no crash reporter, no third-party SDK.</string>
+    <string name="about_offline_title">Nothing leaves your phone</string>
+    <string name="about_offline_body">Idle does not declare the internet permission, so it cannot send anything anywhere even if it wanted to.</string>
+    <string name="about_version">Version %1$s</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">Idle</string>
@@ -94,8 +115,10 @@
     <string name="onboarding_accessibility_body">To show the block screen at the right moment, Idle uses an accessibility service. It reads one thing: the name of the app you just opened.</string>
     <string name="onboarding_accessibility_detail">It cannot read what is on your screen, what you type, or anything inside your apps. Nothing is stored beyond your own rules, and nothing is ever sent anywhere: Idle has no internet permission at all.</string>
     <string name="onboarding_accessibility_consent">I understand and agree</string>
+    <string name="onboarding_overlay_title">Showing the block screen</string>
+    <string name="onboarding_overlay_body">Android only lets an app appear over another one if you allow it. Without this, Idle notices that a blocked app was opened and is then refused permission to say so — the block screen never appears, and nothing tells you why.</string>
     <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_body">While a timed app is open, Idle shows an ongoing notification. Android requires it for the countdown to keep running.</string>
+    <string name="onboarding_notifications_body">While a timed app is open, Idle shows an ongoing notice so that time is never counted without you being able to see it.</string>
     <string name="onboarding_done_title">Ready</string>
     <string name="onboarding_done_body">Create an unlock method, then your first period or timer.</string>
     <string name="onboarding_open_settings">Open Android settings</string>
@@ -104,41 +127,60 @@
     <string name="onboarding_start">Start</string>
     <string name="onboarding_granted">Granted</string>
 
-    <!-- Permission status -->
+    <!-- Permissions -->
     <string name="settings_permissions">Permissions</string>
+    <string name="settings_permissions_all_granted">Everything Idle needs is in place</string>
+    <plurals name="settings_permissions_missing">
+        <item quantity="one">%d thing missing</item>
+        <item quantity="other">%d things missing</item>
+    </plurals>
+    <string name="permissions_required">Required for blocking to work</string>
+    <string name="permissions_recommended">Recommended</string>
+    <string name="permissions_note">None of these can be asked for with a dialog: Android grants them on its own screens, which is where each line takes you.</string>
     <string name="permission_usage_access">Usage access</string>
+    <string name="permission_usage_access_summary">Lets Idle recover today\'s totals after a restart, so a spent quota does not look fresh again.</string>
     <string name="permission_accessibility">Accessibility service</string>
+    <string name="permission_accessibility_summary">How Idle learns that an app was opened. It reads the app\'s name and nothing else.</string>
+    <string name="permission_overlay">Display over other apps</string>
+    <string name="permission_overlay_summary">Without it Android silently refuses to let the block screen appear. Idle never draws an overlay; it needs the permission only to be allowed to show that screen.</string>
     <string name="permission_notifications">Notifications</string>
+    <string name="permission_notifications_summary">Used for the notice shown while a timed app is open, and to tell you when a block could not be shown.</string>
+    <string name="permission_battery">Unrestricted battery use</string>
+    <string name="permission_battery_summary">Some manufacturers put background apps to sleep aggressively enough to stop Idle noticing anything.</string>
     <string name="permission_status_granted">Granted</string>
     <string name="permission_status_missing">Missing</string>
-    <string name="permission_accessibility_off_warning">The accessibility service is off, so nothing is being blocked.</string>
 
     <!-- Accessibility service -->
     <string name="accessibility_service_description">Idle uses this service to notice which app you just opened, so it can show the block screen for the apps you chose to limit. It reads only the app\'s name, never what is on screen, and nothing leaves your phone.</string>
 
     <!-- Notifications -->
     <string name="notification_channel_timers">Timers</string>
+    <string name="notification_channel_setup">Setup</string>
     <string name="notification_counting_title">Counting time</string>
-    <string name="notification_counting_body">A timed app is open.</string>
+    <string name="notification_counting_body">%1$s is open and its daily budget is running down.</string>
+    <string name="notification_overlay_title">Idle could not show the block screen</string>
+    <string name="notification_overlay_body">Android refuses to let Idle appear over other apps until you allow it. Open Idle to grant it — until then, blocks will not appear.</string>
 
     <!-- Block screen -->
-    <string name="block_title">Blocked</string>
-    <string name="block_reason_period">%1$s is blocked until %2$s.</string>
-    <string name="block_reason_timer">You have used your %1$s of %2$s for today.</string>
-    <string name="block_unlock">Unlock with %1$s</string>
-    <string name="block_unlock_generic">Unlock</string>
+    <string name="block_reason_period_short">Blocked until %1$s</string>
+    <string name="block_reason_timer_short">Your %1$s for today are used up</string>
     <string name="block_emergency">Emergency — %1$d min left today</string>
     <string name="block_emergency_spent">No emergency time left today</string>
     <string name="block_emergency_confirm">Use your remaining emergency time?</string>
     <string name="block_close">Close the app</string>
-    <string name="block_scan_again">Scan the code again</string>
-    <string name="block_tap_again">Tap the tag again</string>
-    <string name="block_go_to_place">Go to %1$s and try again</string>
     <string name="block_check_place">Check my position</string>
     <string name="block_wrong_code">That is not the right code.</string>
     <string name="block_wrong_tag">That is not the right tag.</string>
     <string name="block_out_of_area">You are not in the right place.</string>
     <string name="block_method_broken">This unlock method is incomplete. Edit it in Settings.</string>
+
+    <!-- Presenting proof -->
+    <string name="capture_prompt_qr">Scan the code</string>
+    <string name="capture_prompt_nfc">Tap the tag</string>
+    <string name="capture_prompt_location">Go to the place</string>
+    <string name="capture_done_qr">Code recognised</string>
+    <string name="capture_done_nfc">Tag recognised</string>
+    <string name="capture_done_location">You are there</string>
 
     <!-- Unlock methods -->
     <string name="unlock_methods_title">Unlock methods</string>
@@ -146,6 +188,8 @@
     <string name="unlock_methods_empty_body">A method is what lifts a block: a QR code on the fridge, a tag on your desk, or a place you have to walk to.</string>
     <string name="unlock_methods_add">New method</string>
     <string name="unlock_method_in_use">Used by a rule</string>
+    <string name="unlock_method_delete_title">Delete this method?</string>
+    <string name="unlock_method_delete_body">%1$s will no longer be available to guard a rule.</string>
     <string name="unlock_type_qr">QR code or barcode</string>
     <string name="unlock_type_qr_summary">Scan a code to register it, scan it again to unlock.</string>
     <string name="unlock_type_nfc">NFC tag</string>
@@ -156,15 +200,23 @@
     <string name="method_name_label">Name</string>
     <string name="method_name_placeholder">QR on the fridge</string>
     <string name="method_capture_qr">Point the camera at the code</string>
+    <string name="method_capture_qr_hint">Any QR code or barcode works — a loyalty card, a parcel label, something printed.</string>
     <string name="method_capture_qr_done">Code registered</string>
     <string name="method_capture_nfc">Hold the tag against the back of your phone</string>
+    <string name="method_capture_nfc_hint">Only the tag\'s identifier is read. A tag already used for something else keeps working.</string>
     <string name="method_capture_nfc_done">Tag registered</string>
-    <string name="method_capture_location">Register this place</string>
-    <string name="method_capture_location_done">Place registered</string>
+    <string name="method_capture_again">Register something else</string>
+    <string name="method_capture_location">Use my position</string>
+    <string name="method_location_failed">No position could be read. Check that location is on.</string>
+    <string name="method_recentre">Back to me</string>
+    <string name="method_refresh_position">New reading</string>
     <string name="method_radius">Radius: %1$d m</string>
+    <string name="method_radius_hint">Wide enough to be reachable, narrow enough that reaching it is a decision.</string>
     <string name="method_locating">Finding your position…</string>
+    <string name="place_span">%1$d m</string>
+    <string name="place_picker_hint">Drag or tap to move the point. The dot in the middle is where your phone is.</string>
     <string name="permission_camera_rationale">Idle needs the camera to read the code. The image is never stored and never leaves your phone.</string>
-    <string name="permission_location_rationale">Idle needs your position once, to record the place. It is stored on your phone and never sent anywhere.</string>
+    <string name="permission_location_rationale">Idle needs your position once, to place the area. It is stored on your phone and never sent anywhere.</string>
     <string name="permission_grant">Allow</string>
     <string name="permission_denied">Permission refused. You can grant it in Android settings.</string>
     <string name="nfc_unavailable">This phone has no NFC chip.</string>

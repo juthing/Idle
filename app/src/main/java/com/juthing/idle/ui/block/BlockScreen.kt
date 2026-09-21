@@ -1,17 +1,17 @@
 package com.juthing.idle.ui.block
 
-import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,19 +33,23 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.juthing.idle.R
 import com.juthing.idle.core.ui.DurationFormat
-import com.juthing.idle.core.ui.components.NfcReaderEffect
-import com.juthing.idle.core.ui.components.QrScanner
+import com.juthing.idle.core.ui.components.AppIcon
+import com.juthing.idle.core.ui.components.CaptureState
+import com.juthing.idle.core.ui.components.UnlockFailureMessage
+import com.juthing.idle.core.ui.components.UnlockPanel
+import com.juthing.idle.core.ui.messageRes
+import com.juthing.idle.core.ui.tap
 import com.juthing.idle.data.system.NfcTagReader
 import com.juthing.idle.domain.model.BlockReason
-import com.juthing.idle.domain.model.UnlockMethodType
-import com.juthing.idle.domain.usecase.UnlockFailure
+import kotlinx.coroutines.delay
 
 /**
  * The screen the user meets instead of the app they opened.
  *
- * It says plainly what is blocking and why, offers the one method that lifts it, and keeps the
- * emergency escape hatch present but quiet. Nothing here is decorative: this screen exists at a
- * moment when the user is impatient, and every extra element is one more thing to argue with.
+ * It names the app, says plainly what is blocking and until when, offers the one method that
+ * lifts it, and keeps the emergency escape hatch present but quiet. Nothing here is decorative
+ * except the target itself: this screen exists at a moment when the user is impatient, and every
+ * extra element is one more thing to argue with.
  */
 @Composable
 fun BlockScreen(
@@ -56,159 +61,123 @@ fun BlockScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val resources = LocalResources.current
 
-    LaunchedEffect(uiState.dismissed) {
-        if (uiState.dismissed && !uiState.loading) onDismiss()
+    LaunchedEffect(uiState.dismissed, uiState.unlocked) {
+        if (!uiState.dismissed || uiState.loading) return@LaunchedEffect
+        // When the block was actually lifted, the confirmation gets a moment on screen; when it
+        // simply no longer applies, there is nothing to celebrate and the screen just goes.
+        if (uiState.unlocked) delay(900)
+        onDismiss()
     }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 32.dp),
-            verticalArrangement = Arrangement.Center,
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp, vertical = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val reason = uiState.reason ?: return@Column
 
-            Text(
-                text = stringResource(R.string.block_title),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = when (reason) {
-                    is BlockReason.DuringPeriod -> stringResource(
-                        R.string.block_reason_period,
-                        uiState.appLabel,
-                        DurationFormat.clock(reason.endsAtMinute),
-                    )
-
-                    is BlockReason.TimerExhausted -> stringResource(
-                        R.string.block_reason_timer,
-                        DurationFormat.duration(resources, reason.limitMinutes),
-                        uiState.appLabel,
-                    )
-                },
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 12.dp),
+            BlockHeader(
+                packageName = uiState.packageName,
+                appLabel = uiState.appLabel,
+                reason = reason,
+                limitLabel = { minutes -> DurationFormat.duration(resources, minutes) },
             )
 
-            uiState.failure?.let { failure ->
+            val method = uiState.method
+            if (method == null) {
                 Text(
-                    text = stringResource(failure.messageRes()),
+                    text = stringResource(R.string.block_method_broken),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 16.dp),
                 )
+            } else {
+                UnlockPanel(
+                    method = method,
+                    nfcTagReader = nfcTagReader,
+                    nfcAvailability = uiState.nfcAvailability,
+                    state = when {
+                        uiState.unlocked -> CaptureState.DONE
+                        uiState.failure != null -> CaptureState.FAILED
+                        else -> CaptureState.WAITING
+                    },
+                    checkingPosition = uiState.checkingPosition,
+                    onScan = viewModel::submitScan,
+                    onTag = viewModel::submitTag,
+                    onCheckPosition = viewModel::submitPosition,
+                )
+
+                uiState.failure?.let { failure ->
+                    UnlockFailureMessage(stringResource(failure.messageRes()))
+                }
             }
 
-            UnlockPrompt(
-                viewModel = viewModel,
-                nfcTagReader = nfcTagReader,
-                modifier = Modifier.padding(top = 24.dp),
-            )
+            if (!uiState.unlocked) {
+                HorizontalDivider(modifier = Modifier.fillMaxWidth(0.4f))
 
-            EmergencyButton(
-                secondsLeft = uiState.emergencySecondsLeft,
-                onUse = viewModel::useEmergency,
-                modifier = Modifier.padding(top = 24.dp),
-            )
-
-            TextButton(onClick = onDismiss, modifier = Modifier.padding(top = 4.dp)) {
-                Text(stringResource(R.string.block_close))
-            }
-        }
-    }
-}
-
-/** The part of the screen that actually takes the unlock attempt. */
-@Composable
-private fun UnlockPrompt(
-    viewModel: BlockViewModel,
-    nfcTagReader: NfcTagReader,
-    modifier: Modifier = Modifier,
-) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val method = uiState.method
-
-    if (method == null) {
-        Text(
-            text = stringResource(R.string.block_method_broken),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error,
-            modifier = modifier,
-        )
-        return
-    }
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.block_unlock, method.name),
-            style = MaterialTheme.typography.titleMedium,
-        )
-
-        when (method.type) {
-            UnlockMethodType.QR -> QrUnlock(onDecoded = viewModel::submitScan)
-
-            UnlockMethodType.NFC -> {
-                NfcReaderEffect(reader = nfcTagReader, onTag = viewModel::submitTag)
-                Text(
-                    text = stringResource(R.string.block_tap_again),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                EmergencyButton(
+                    secondsLeft = uiState.emergencySecondsLeft,
+                    onUse = viewModel::useEmergency,
                 )
-            }
 
-            UnlockMethodType.LOCATION -> {
-                Text(
-                    text = stringResource(R.string.block_go_to_place, method.name),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-                if (uiState.checkingPosition) {
-                    CircularProgressIndicator()
-                } else {
-                    Button(onClick = viewModel::submitPosition) {
-                        Text(stringResource(R.string.block_check_place))
-                    }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.block_close))
                 }
             }
         }
     }
 }
 
-/** The camera, once the user has allowed it from here. */
+/** The app, its name, and the one sentence that says why it will not open. */
 @Composable
-private fun QrUnlock(onDecoded: (String) -> Unit) {
-    var granted by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { granted = it }
-
-    if (granted) {
-        Text(
-            text = stringResource(R.string.block_scan_again),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        QrScanner(
-            onDecoded = onDecoded,
+private fun BlockHeader(
+    packageName: String,
+    appLabel: String,
+    reason: BlockReason,
+    limitLabel: (Int) -> String,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        // The app's own icon, dimmed behind a tonal disc: it is recognised instantly, and
+        // showing it greyed says "not this one, not now" before a single word is read.
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(16.dp)),
-        )
-    } else {
-        Button(onClick = { launcher.launch(Manifest.permission.CAMERA) }) {
-            Text(stringResource(R.string.block_unlock_generic))
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(packageName = packageName, size = 40.dp)
         }
+
+        Text(
+            text = appLabel,
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center,
+        )
+
+        Text(
+            text = when (reason) {
+                is BlockReason.DuringPeriod -> stringResource(
+                    R.string.block_reason_period_short,
+                    DurationFormat.clock(reason.endsAtMinute),
+                )
+
+                is BlockReason.TimerExhausted -> stringResource(
+                    R.string.block_reason_timer_short,
+                    limitLabel(reason.limitMinutes),
+                )
+            },
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -224,6 +193,7 @@ private fun EmergencyButton(
     onUse: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val haptics = LocalHapticFeedback.current
     var confirming by remember { mutableStateOf(false) }
 
     if (secondsLeft <= 0) {
@@ -245,16 +215,13 @@ private fun EmergencyButton(
                 textAlign = TextAlign.Center,
             )
         }
-        TextButton(onClick = { if (confirming) onUse() else confirming = true }) {
+        TextButton(
+            onClick = {
+                haptics.tap()
+                if (confirming) onUse() else confirming = true
+            },
+        ) {
             Text(stringResource(R.string.block_emergency, secondsLeft / 60))
         }
     }
-}
-
-/** What to tell the user about a refused attempt. */
-private fun UnlockFailure.messageRes(): Int = when (this) {
-    UnlockFailure.MISMATCH -> R.string.block_wrong_code
-    UnlockFailure.OUT_OF_AREA -> R.string.block_out_of_area
-    UnlockFailure.WRONG_KIND -> R.string.block_wrong_tag
-    UnlockFailure.METHOD_INCOMPLETE -> R.string.block_method_broken
 }

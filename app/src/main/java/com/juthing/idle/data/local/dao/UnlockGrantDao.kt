@@ -13,6 +13,13 @@ interface UnlockGrantDao {
     @Query("SELECT * FROM unlock_grants WHERE package_name = :packageName AND expires_at > :nowMillis LIMIT 1")
     suspend fun getActiveFor(packageName: String, nowMillis: Long): UnlockGrantEntity?
 
+    /** The edit unlock in effect for one rule, filed under its own scope rather than a package. */
+    @Query(
+        "SELECT * FROM unlock_grants " +
+            "WHERE rule_id = :ruleId AND package_name = :scope AND expires_at > :nowMillis LIMIT 1",
+    )
+    suspend fun getActiveForRule(ruleId: Long, scope: String, nowMillis: Long): UnlockGrantEntity?
+
     @Query("SELECT * FROM unlock_grants WHERE expires_at > :nowMillis")
     fun observeActive(nowMillis: Long): Flow<List<UnlockGrantEntity>>
 

@@ -1,7 +1,12 @@
 package com.juthing.idle.blocking
 
 import android.accessibilityservice.AccessibilityService
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.view.accessibility.AccessibilityEvent
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -31,6 +36,33 @@ class IdleAccessibilityService : AccessibilityService() {
      */
     private var lastPackage: String? = null
 
+    /**
+     * Stops the clock when the screen goes dark.
+     *
+     * No accessibility event is sent when the display turns off, so without this a timed app left
+     * open would keep burning its quota in the user's pocket.
+     */
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != Intent.ACTION_SCREEN_OFF) return
+            lastPackage = null
+            coordinator.onForegroundCleared()
+        }
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        // Sending the user home is the only thing Idle can still do when Android refuses to let
+        // the block screen open, and only this service is allowed to do it.
+        coordinator.foregroundController = ForegroundController { performGlobalAction(GLOBAL_ACTION_HOME) }
+        ContextCompat.registerReceiver(
+            this,
+            screenReceiver,
+            IntentFilter(Intent.ACTION_SCREEN_OFF),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
         val packageName = event.packageName?.toString() ?: return
@@ -42,10 +74,12 @@ class IdleAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() = Unit
 
-    override fun onUnbind(intent: android.content.Intent?): Boolean {
+    override fun onUnbind(intent: Intent?): Boolean {
         // The user turned the service off: stop counting rather than leaving a stale notification.
         lastPackage = null
+        coordinator.foregroundController = null
         coordinator.onForegroundCleared()
+        runCatching { unregisterReceiver(screenReceiver) }
         return super.onUnbind(intent)
     }
 }

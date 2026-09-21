@@ -22,9 +22,30 @@ class GrantUnlockUseCase @Inject constructor(
      * @return how long the app stays usable, in milliseconds.
      */
     suspend operator fun invoke(ruleId: Long, packageName: String): Long {
-        val minutes = settingsRepository.unlockDurationMinutes.first()
-        val durationMillis = minutes * 60_000L
+        val durationMillis = unlockWindowMillis()
         grantRepository.grant(ruleId = ruleId, packageName = packageName, durationMillis = durationMillis)
         return durationMillis
     }
+
+    /**
+     * Opens a rule for editing after its method was presented from inside Idle.
+     *
+     * Filed against the rule rather than against any app: this unlock buys the right to change
+     * the rule, not the right to use the apps it covers. Someone who wants both pays twice, which
+     * is the point.
+     *
+     * @return how long the rule stays editable, in milliseconds.
+     */
+    suspend fun forEditing(ruleId: Long): Long {
+        val durationMillis = unlockWindowMillis()
+        grantRepository.grant(
+            ruleId = ruleId,
+            packageName = UnlockGrantRepository.EDIT_SCOPE,
+            durationMillis = durationMillis,
+        )
+        return durationMillis
+    }
+
+    private suspend fun unlockWindowMillis(): Long =
+        settingsRepository.unlockDurationMinutes.first() * 60_000L
 }

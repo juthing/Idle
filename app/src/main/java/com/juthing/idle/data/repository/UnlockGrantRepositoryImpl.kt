@@ -19,6 +19,12 @@ class UnlockGrantRepositoryImpl @Inject constructor(
     override suspend fun activeGrantFor(packageName: String): UnlockGrant? =
         dao.getActiveFor(packageName, clock.nowMillis())?.toDomain()
 
+    override suspend fun activeEditGrantFor(ruleId: Long): UnlockGrant? = dao.getActiveForRule(
+        ruleId = ruleId,
+        scope = UnlockGrantRepository.EDIT_SCOPE,
+        nowMillis = clock.nowMillis(),
+    )?.toDomain()
+
     override fun observeActiveGrants(): Flow<List<UnlockGrant>> =
         dao.observeActive(clock.nowMillis()).map { grants -> grants.map { it.toDomain() } }
 
