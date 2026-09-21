@@ -43,6 +43,13 @@ state and unlock secrets have no business travelling to another device.
 Locations are read on demand only — once when you register a place, once when you unlock. Idle
 never subscribes to location updates and never registers a geofence.
 
+## Installing on a phone
+
+Every push is built by GitHub Actions and published as an installable APK on the
+[releases page](https://github.com/juthing/Idle/releases). No Android toolchain is needed to try
+the app — see **[INSTALL.md](INSTALL.md)** (in French) for the walkthrough, including the Android
+restricted-settings step without which the accessibility service cannot be enabled at all.
+
 ## Building
 
 Requires JDK 17+ and the Android SDK (platform 37.2, build-tools 36).
