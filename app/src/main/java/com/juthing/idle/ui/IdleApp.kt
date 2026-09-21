@@ -1,0 +1,98 @@
+package com.juthing.idle.ui
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.juthing.idle.ui.navigation.PeriodsRoute
+import com.juthing.idle.ui.navigation.SettingsRoute
+import com.juthing.idle.ui.navigation.TimersRoute
+import com.juthing.idle.ui.navigation.TopLevelDestination
+import com.juthing.idle.ui.periods.PeriodsScreen
+import com.juthing.idle.ui.settings.SettingsScreen
+import com.juthing.idle.ui.timers.TimersScreen
+
+/**
+ * Hosts the three top-level sections behind a bottom navigation bar.
+ *
+ * Switching tabs never grows the back stack: each tab is restored to the state it was
+ * left in, and the system back button always returns to the Periods tab.
+ */
+@Composable
+fun IdleApp(
+    navController: NavHostController = rememberNavController(),
+) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                TopLevelDestination.entries.forEach { destination ->
+                    val selected = currentDestination?.hierarchy()?.any {
+                        it.hasRouteOf(destination)
+                    } == true
+
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = { navController.navigateToTopLevel(destination) },
+                        icon = {
+                            Icon(
+                                imageVector = if (selected) destination.selectedIcon else destination.icon,
+                                contentDescription = null,
+                            )
+                        },
+                        label = { Text(stringResource(destination.labelRes)) },
+                    )
+                }
+            }
+        },
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = PeriodsRoute,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            composable<PeriodsRoute> { PeriodsScreen() }
+            composable<TimersRoute> { TimersScreen() }
+            composable<SettingsRoute> { SettingsScreen() }
+        }
+    }
+}
+
+/**
+ * Navigates to a top-level [destination], keeping a single entry per tab and
+ * restoring whatever state that tab had when it was last visited.
+ */
+private fun NavHostController.navigateToTopLevel(destination: TopLevelDestination) {
+    navigate(destination.route) {
+        popUpTo(graph.startDestinationId) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
+private fun androidx.navigation.NavDestination.hierarchy(): Sequence<androidx.navigation.NavDestination> =
+    generateSequence(this) { it.parent }
+
+private fun androidx.navigation.NavDestination.hasRouteOf(destination: TopLevelDestination): Boolean =
+    when (destination) {
+        TopLevelDestination.PERIODS -> hasRoute(PeriodsRoute::class)
+        TopLevelDestination.TIMERS -> hasRoute(TimersRoute::class)
+        TopLevelDestination.SETTINGS -> hasRoute(SettingsRoute::class)
+    }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Idle</string>
+
+    <!-- Navigation -->
+    <string name="nav_periods">Périodes</string>
+    <string name="nav_timers">Minuteurs</string>
+    <string name="nav_settings">Réglages</string>
+
+    <!-- Périodes -->
+    <string name="periods_title">Périodes</string>
+    <string name="periods_empty_title">Aucune période</string>
+    <string name="periods_empty_body">Bloquez des applications sur des plages horaires — par exemple les réseaux sociaux de 22 h à 7 h.</string>
+    <string name="periods_add">Nouvelle période</string>
+
+    <!-- Minuteurs -->
+    <string name="timers_title">Minuteurs</string>
+    <string name="timers_empty_title">Aucun minuteur</string>
+    <string name="timers_empty_body">Limitez le temps quotidien passé sur un groupe d\'applications — par exemple 2 h de vidéo.</string>
+    <string name="timers_add">Nouveau minuteur</string>
+
+    <!-- Réglages -->
+    <string name="settings_title">Réglages</string>
+</resources>

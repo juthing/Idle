@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Idle</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_periods">Periods</string>
+    <string name="nav_timers">Timers</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Periods -->
+    <string name="periods_title">Periods</string>
+    <string name="periods_empty_title">No periods yet</string>
+    <string name="periods_empty_body">Block apps during chosen hours — for example, social media from 10 pm to 7 am.</string>
+    <string name="periods_add">New period</string>
+
+    <!-- Timers -->
+    <string name="timers_title">Timers</string>
+    <string name="timers_empty_title">No timers yet</string>
+    <string name="timers_empty_body">Cap how long you use a group of apps each day — for example, 2 hours of video.</string>
+    <string name="timers_add">New timer</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+</resources>
