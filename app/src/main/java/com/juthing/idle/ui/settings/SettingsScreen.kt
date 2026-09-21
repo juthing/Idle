@@ -1,54 +1,69 @@
 package com.juthing.idle.ui.settings
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Key
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.Timelapse
+import androidx.compose.material.icons.outlined.WarningAmber
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.juthing.idle.R
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.juthing.idle.core.ui.DurationFormat
-import com.juthing.idle.data.system.PermissionChecker
+import com.juthing.idle.core.ui.components.SettingsGroup
+import com.juthing.idle.core.ui.components.SettingsRow
 import com.juthing.idle.domain.repository.ThemeMode
 
-/** Appearance, blocking behaviour, and the way into the unlock methods. */
+/**
+ * The way in to every setting, and nothing else.
+ *
+ * Each subject lives on its own page. A settings screen that scrolls through appearance, unlock
+ * duration, methods, four permissions and an about box is a screen where the one line that says
+ * blocking is switched off scrolls past unread — which is exactly what used to happen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    permissionChecker: PermissionChecker,
+    onOpenAppearance: () -> Unit,
+    onOpenBlocking: () -> Unit,
     onOpenUnlockMethods: () -> Unit,
+    onOpenPermissions: () -> Unit,
+    onOpenAbout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val resources = LocalResources.current
-    val context = LocalContext.current
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LifecycleResumeEffect(Unit) {
         viewModel.refresh()
@@ -56,177 +71,120 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.settings_title)) }) },
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            LargeTopAppBar(
+                title = { Text(stringResource(R.string.settings_title)) },
+                scrollBehavior = scrollBehavior,
+            )
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            // A disabled service means nothing is being blocked at all, which the user has to
-            // know before anything else on this screen.
-            if (!uiState.accessibilityEnabled) {
-                Text(
-                    text = stringResource(R.string.permission_accessibility_off_warning),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            // Nothing below matters if this is red: a missing half means Idle notices nothing, or
+            // notices and cannot show anything. It is said first, in full, and in colour.
+            if (!uiState.blockingWorks) {
+                BlockingBrokenBanner(onClick = onOpenPermissions)
+            }
+
+            SettingsGroup {
+                SettingsRow(
+                    icon = Icons.Outlined.Palette,
+                    title = stringResource(R.string.settings_appearance),
+                    summary = stringResource(uiState.themeMode.labelRes()),
+                    onClick = onOpenAppearance,
+                )
+                SettingsRow(
+                    icon = Icons.Outlined.Timelapse,
+                    title = stringResource(R.string.settings_blocking),
+                    summary = DurationFormat.duration(resources, uiState.unlockDurationMinutes),
+                    onClick = onOpenBlocking,
+                )
+                SettingsRow(
+                    icon = Icons.Outlined.Key,
+                    title = stringResource(R.string.settings_unlock_methods),
+                    summary = stringResource(R.string.settings_unlock_methods_summary),
+                    onClick = onOpenUnlockMethods,
                 )
             }
 
-            SectionTitle(stringResource(R.string.settings_appearance))
-            Column(modifier = Modifier.selectableGroup()) {
-                ThemeMode.entries.forEach { mode ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { viewModel.setThemeMode(mode) }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        RadioButton(selected = uiState.themeMode == mode, onClick = null)
-                        Text(
-                            text = stringResource(mode.labelRes()),
-                            style = MaterialTheme.typography.bodyLarge,
+            SettingsGroup {
+                SettingsRow(
+                    icon = Icons.Outlined.Shield,
+                    title = stringResource(R.string.settings_permissions),
+                    summary = if (uiState.missingPermissions == 0) {
+                        stringResource(R.string.settings_permissions_all_granted)
+                    } else {
+                        pluralStringResource(
+                            R.plurals.settings_permissions_missing,
+                            uiState.missingPermissions,
+                            uiState.missingPermissions,
                         )
-                    }
-                }
-            }
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            SectionTitle(stringResource(R.string.settings_blocking))
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    text = stringResource(R.string.settings_unlock_duration),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Text(
-                    text = if (uiState.unlockDurationLocked) {
-                        stringResource(R.string.settings_unlock_duration_locked)
-                    } else {
-                        stringResource(R.string.settings_unlock_duration_summary)
                     },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (uiState.unlockDurationLocked) {
-                        MaterialTheme.colorScheme.error
-                    } else {
+                    iconTint = if (uiState.missingPermissions == 0) {
                         MaterialTheme.colorScheme.onSurfaceVariant
+                    } else {
+                        MaterialTheme.colorScheme.error
                     },
+                    onClick = onOpenPermissions,
                 )
-                Text(
-                    text = DurationFormat.duration(resources, uiState.unlockDurationMinutes),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-                // 5 to 60 minutes in steps of five: longer than an hour stops being an unlock.
-                Slider(
-                    value = uiState.unlockDurationMinutes.toFloat(),
-                    onValueChange = { viewModel.setUnlockDuration(it.toInt()) },
-                    valueRange = 5f..60f,
-                    steps = (60 - 5) / 5 - 1,
-                    enabled = !uiState.unlockDurationLocked,
+                SettingsRow(
+                    icon = Icons.Outlined.Info,
+                    title = stringResource(R.string.settings_about),
+                    onClick = onOpenAbout,
                 )
             }
-
-            NavigationRow(
-                title = stringResource(R.string.settings_unlock_methods),
-                summary = stringResource(R.string.settings_unlock_methods_summary),
-                onClick = onOpenUnlockMethods,
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            SectionTitle(stringResource(R.string.settings_permissions))
-            PermissionRow(
-                title = stringResource(R.string.permission_usage_access),
-                granted = uiState.usageAccessGranted,
-                onClick = { context.startActivity(permissionChecker.usageAccessIntent()) },
-            )
-            PermissionRow(
-                title = stringResource(R.string.permission_accessibility),
-                granted = uiState.accessibilityEnabled,
-                onClick = { context.startActivity(permissionChecker.accessibilitySettingsIntent()) },
-            )
-            PermissionRow(
-                title = stringResource(R.string.permission_notifications),
-                granted = uiState.notificationsGranted,
-                onClick = { },
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            SectionTitle(stringResource(R.string.settings_about))
-            Text(
-                text = stringResource(R.string.settings_about_summary),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
         }
     }
 }
 
-/** One permission and whether it is in place; tapping opens where Android grants it. */
+/** The one thing on this screen the user cannot be allowed to scroll past. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PermissionRow(title: String, granted: Boolean, onClick: () -> Unit) {
-    Row(
+private fun BlockingBrokenBanner(onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = !granted, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(horizontal = 16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
     ) {
-        Text(text = title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(
-                if (granted) R.string.permission_status_granted else R.string.permission_status_missing,
-            ),
-            style = MaterialTheme.typography.labelLarge,
-            color = if (granted) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.error
-            },
-        )
-    }
-}
-
-@Composable
-private fun SectionTitle(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp),
-    )
-}
-
-@Composable
-private fun NavigationRow(title: String, summary: String, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, style = MaterialTheme.typography.bodyLarge)
-            Text(
-                text = summary,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.WarningAmber,
+                contentDescription = null,
+                modifier = Modifier.size(28.dp),
             )
+            Column {
+                Text(
+                    text = stringResource(R.string.settings_blocking_broken_title),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    text = stringResource(R.string.settings_blocking_broken_body),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
     }
 }
 
-private fun ThemeMode.labelRes(): Int = when (this) {
+/** The localised name of a theme choice, used both on the hub and on the appearance page. */
+internal fun ThemeMode.labelRes(): Int = when (this) {
     ThemeMode.SYSTEM -> R.string.theme_system
     ThemeMode.LIGHT -> R.string.theme_light
     ThemeMode.DARK -> R.string.theme_dark

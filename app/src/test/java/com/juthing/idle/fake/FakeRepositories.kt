@@ -71,6 +71,12 @@ class FakeUnlockGrantRepository(private val clock: FakeClock) : UnlockGrantRepos
     override suspend fun activeGrantFor(packageName: String): UnlockGrant? =
         grants.firstOrNull { it.packageName == packageName && it.isActiveAt(clock.nowMillis()) }
 
+    override suspend fun activeEditGrantFor(ruleId: Long): UnlockGrant? = grants.firstOrNull {
+        it.ruleId == ruleId &&
+            it.packageName == UnlockGrantRepository.EDIT_SCOPE &&
+            it.isActiveAt(clock.nowMillis())
+    }
+
     override fun observeActiveGrants(): Flow<List<UnlockGrant>> =
         flowOf(grants.filter { it.isActiveAt(clock.nowMillis()) })
 

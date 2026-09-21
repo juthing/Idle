@@ -12,7 +12,7 @@
     <string name="action_delete">Supprimer</string>
     <string name="action_back">Retour</string>
     <string name="action_done">Terminé</string>
-    <string name="rule_locked">Verrouillé tant que la règle est en cours. Déverrouillez-la pour la modifier.</string>
+    <string name="action_cancel">Annuler</string>
     <plurals name="app_count">
         <item quantity="one">%d application</item>
         <item quantity="many">%d applications</item>
@@ -27,17 +27,22 @@
     <string name="rule_apps_none">Choisir des applications</string>
     <string name="rule_unlock_label">Méthode de déverrouillage</string>
     <string name="rule_unlock_none">Choisir une méthode</string>
-    <string name="rule_unlock_required">Chaque règle exige une méthode de déverrouillage. Créez-en une dans les réglages.</string>
-    <string name="rule_days_label">Jours</string>
+    <string name="rule_unlock_none_yet">Vous n\'avez encore aucune méthode. Créez-en une ci-dessous.</string>
+    <string name="rule_when_label">Quand</string>
     <string name="rule_start_label">De</string>
     <string name="rule_end_label">À</string>
     <string name="rule_crosses_midnight">Se poursuit jusqu\'au lendemain matin.</string>
     <string name="rule_limit_label">Limite quotidienne</string>
-    <string name="rule_limit_value">%1$s par jour</string>
     <string name="new_period_title">Nouvelle période</string>
     <string name="edit_period_title">Modifier la période</string>
     <string name="new_timer_title">Nouveau minuteur</string>
     <string name="edit_timer_title">Modifier le minuteur</string>
+    <string name="rule_locked_title">Cette règle est en cours</string>
+    <string name="rule_locked">Vous pouvez la consulter, mais la modifier, la désactiver ou la supprimer passe d\'abord par sa méthode de déverrouillage.</string>
+    <string name="rule_unlock_to_edit">Déverrouiller pour modifier</string>
+    <string name="rule_unlocked_for">Déverrouillée. Vous pouvez la modifier pendant %1$d minutes.</string>
+    <string name="rule_delete_title">Supprimer cette règle ?</string>
+    <string name="rule_delete_body">Les applications concernées cessent immédiatement d\'être bloquées. C\'est irréversible.</string>
 
     <!-- Sélecteur d\'applications -->
     <string name="app_picker_title">Choisir des applications</string>
@@ -75,17 +80,33 @@
     <!-- Réglages -->
     <string name="settings_title">Réglages</string>
     <string name="settings_appearance">Apparence</string>
+    <string name="settings_appearance_summary">Les couleurs viennent de votre fond d\'écran à partir d\'Android 12, pour qu\'Idle ressemble au reste du téléphone.</string>
     <string name="theme_system">Suivre le système</string>
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
     <string name="settings_blocking">Blocage</string>
+    <string name="settings_blocking_note">Aucun des réglages de cette page ne peut être modifié pendant qu\'une règle est en cours. C\'est exactement leur raison d\'être.</string>
+    <string name="settings_blocking_broken_title">Rien n\'est bloqué</string>
+    <string name="settings_blocking_broken_body">Il manque à Idle quelque chose qu\'Android doit lui accorder. Touchez pour voir quoi.</string>
     <string name="settings_unlock_duration">Durée de déverrouillage</string>
     <string name="settings_unlock_duration_summary">Temps pendant lequel une application reste utilisable après un déverrouillage.</string>
     <string name="settings_unlock_duration_locked">Verrouillé tant qu\'une règle est en cours.</string>
     <string name="settings_unlock_methods">Méthodes de déverrouillage</string>
     <string name="settings_unlock_methods_summary">Codes QR, tags NFC et lieux qui lèvent un blocage.</string>
+    <string name="settings_emergency">Temps d\'urgence</string>
+    <string name="settings_emergency_summary">De quoi déverrouiller sans code, sans tag et sans déplacement. Partagé par toutes les applications, et non configurable — un quota que vous pourriez augmenter serait le moyen le plus simple de contourner toutes vos règles.</string>
     <string name="settings_about">À propos</string>
-    <string name="settings_about_summary">Gratuit, sans publicité, sans suivi. Rien ne quitte votre téléphone.</string>
+
+    <!-- À propos -->
+    <string name="about_free_title">Gratuit</string>
+    <string name="about_free_body">Toutes les fonctions, aucun achat, aucun abonnement.</string>
+    <string name="about_ads_title">Sans publicité</string>
+    <string name="about_ads_body">Il n\'y a aucun code publicitaire dans l\'application.</string>
+    <string name="about_tracking_title">Sans suivi</string>
+    <string name="about_tracking_body">Aucune analytics, aucun rapport de plantage, aucun SDK tiers.</string>
+    <string name="about_offline_title">Rien ne quitte votre téléphone</string>
+    <string name="about_offline_body">Idle ne déclare pas la permission internet : elle ne peut rien envoyer nulle part, même si elle le voulait.</string>
+    <string name="about_version">Version %1$s</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">Idle</string>
@@ -96,8 +117,10 @@
     <string name="onboarding_accessibility_body">Pour afficher l\'écran de blocage au bon moment, Idle utilise un service d\'accessibilité. Il lit une seule chose : le nom de l\'application que vous venez d\'ouvrir.</string>
     <string name="onboarding_accessibility_detail">Il ne peut pas lire ce qui est affiché, ce que vous tapez, ni le contenu de vos applications. Rien n\'est conservé en dehors de vos propres règles, et rien n\'est jamais envoyé nulle part : Idle n\'a même pas la permission d\'accéder à internet.</string>
     <string name="onboarding_accessibility_consent">J\'ai compris et j\'accepte</string>
+    <string name="onboarding_overlay_title">Afficher l\'écran de blocage</string>
+    <string name="onboarding_overlay_body">Android n\'autorise une application à s\'afficher par-dessus une autre que si vous le lui permettez. Sans cela, Idle voit bien qu\'une application bloquée s\'ouvre, puis se fait refuser le droit de le dire : l\'écran de blocage n\'apparaît jamais, et rien ne vous explique pourquoi.</string>
     <string name="onboarding_notifications_title">Notifications</string>
-    <string name="onboarding_notifications_body">Pendant qu\'une application minutée est ouverte, Idle affiche une notification persistante. Android l\'exige pour que le décompte continue.</string>
+    <string name="onboarding_notifications_body">Pendant qu\'une application minutée est ouverte, Idle affiche une notification persistante, pour que du temps ne vous soit jamais décompté sans que vous puissiez le voir.</string>
     <string name="onboarding_done_title">C\'est prêt</string>
     <string name="onboarding_done_body">Créez une méthode de déverrouillage, puis votre première période ou votre premier minuteur.</string>
     <string name="onboarding_open_settings">Ouvrir les réglages Android</string>
@@ -106,41 +129,61 @@
     <string name="onboarding_start">Commencer</string>
     <string name="onboarding_granted">Accordé</string>
 
-    <!-- État des permissions -->
+    <!-- Permissions -->
     <string name="settings_permissions">Permissions</string>
+    <string name="settings_permissions_all_granted">Idle a tout ce qu\'il lui faut</string>
+    <plurals name="settings_permissions_missing">
+        <item quantity="one">%d élément manquant</item>
+        <item quantity="many">%d éléments manquants</item>
+        <item quantity="other">%d éléments manquants</item>
+    </plurals>
+    <string name="permissions_required">Indispensable au blocage</string>
+    <string name="permissions_recommended">Recommandé</string>
+    <string name="permissions_note">Aucune de ces autorisations ne peut être demandée par une fenêtre : Android les accorde sur ses propres écrans, et chaque ligne y mène.</string>
     <string name="permission_usage_access">Accès aux statistiques</string>
+    <string name="permission_usage_access_summary">Permet à Idle de retrouver les totaux du jour après un redémarrage, pour qu\'un quota épuisé ne reparte pas à zéro.</string>
     <string name="permission_accessibility">Service d\'accessibilité</string>
+    <string name="permission_accessibility_summary">C\'est ainsi qu\'Idle sait qu\'une application vient d\'être ouverte. Il en lit le nom, rien d\'autre.</string>
+    <string name="permission_overlay">Superposition à d\'autres applications</string>
+    <string name="permission_overlay_summary">Sans elle, Android refuse silencieusement d\'afficher l\'écran de blocage. Idle ne dessine jamais de superposition : la permission ne sert qu\'à avoir le droit d\'afficher cet écran.</string>
     <string name="permission_notifications">Notifications</string>
+    <string name="permission_notifications_summary">Pour la notification affichée pendant qu\'une application minutée est ouverte, et pour vous prévenir quand un blocage n\'a pas pu s\'afficher.</string>
+    <string name="permission_battery">Utilisation de la batterie non restreinte</string>
+    <string name="permission_battery_summary">Certains constructeurs endorment les applications en arrière-plan au point qu\'Idle ne remarque plus rien.</string>
     <string name="permission_status_granted">Accordée</string>
     <string name="permission_status_missing">Manquante</string>
-    <string name="permission_accessibility_off_warning">Le service d\'accessibilité est désactivé : plus rien n\'est bloqué.</string>
 
     <!-- Service d\'accessibilité -->
     <string name="accessibility_service_description">Idle utilise ce service pour savoir quelle application vient d\'être ouverte, afin d\'afficher l\'écran de blocage pour celles que vous avez choisi de limiter. Il ne lit que le nom de l\'application, jamais ce qui est affiché, et rien ne quitte votre téléphone.</string>
 
     <!-- Notifications -->
     <string name="notification_channel_timers">Minuteurs</string>
+    <string name="notification_channel_setup">Configuration</string>
     <string name="notification_counting_title">Décompte en cours</string>
-    <string name="notification_counting_body">Une application minutée est ouverte.</string>
+    <string name="notification_counting_body">%1$s est ouverte et son budget du jour s\'écoule.</string>
+    <string name="notification_overlay_title">Idle n\'a pas pu afficher le blocage</string>
+    <string name="notification_overlay_body">Android refuse qu\'Idle s\'affiche par-dessus les autres applications tant que vous ne l\'avez pas autorisé. Ouvrez Idle pour l\'accorder — d\'ici là, aucun blocage n\'apparaîtra.</string>
 
     <!-- Écran de blocage -->
-    <string name="block_title">Bloqué</string>
-    <string name="block_reason_period">%1$s est bloquée jusqu\'à %2$s.</string>
-    <string name="block_reason_timer">Vous avez utilisé vos %1$s de %2$s aujourd\'hui.</string>
-    <string name="block_unlock">Déverrouiller avec %1$s</string>
-    <string name="block_unlock_generic">Déverrouiller</string>
+    <string name="block_reason_period_short">Bloquée jusqu\'à %1$s</string>
+    <string name="block_reason_timer_short">Vos %1$s du jour sont épuisés</string>
     <string name="block_emergency">Urgence — %1$d min restantes aujourd\'hui</string>
     <string name="block_emergency_spent">Plus de temps d\'urgence aujourd\'hui</string>
     <string name="block_emergency_confirm">Utiliser votre temps d\'urgence restant ?</string>
     <string name="block_close">Fermer l\'application</string>
-    <string name="block_scan_again">Rescannez le code</string>
-    <string name="block_tap_again">Réapprochez le tag</string>
-    <string name="block_go_to_place">Rendez-vous à %1$s et réessayez</string>
     <string name="block_check_place">Vérifier ma position</string>
     <string name="block_wrong_code">Ce n\'est pas le bon code.</string>
     <string name="block_wrong_tag">Ce n\'est pas le bon tag.</string>
     <string name="block_out_of_area">Vous n\'êtes pas au bon endroit.</string>
     <string name="block_method_broken">Cette méthode est incomplète. Modifiez-la dans les réglages.</string>
+
+    <!-- Présenter la preuve -->
+    <string name="capture_prompt_qr">Scannez le code</string>
+    <string name="capture_prompt_nfc">Approchez le tag</string>
+    <string name="capture_prompt_location">Rendez-vous sur place</string>
+    <string name="capture_done_qr">Code reconnu</string>
+    <string name="capture_done_nfc">Tag reconnu</string>
+    <string name="capture_done_location">Vous y êtes</string>
 
     <!-- Méthodes de déverrouillage -->
     <string name="unlock_methods_title">Méthodes de déverrouillage</string>
@@ -148,6 +191,8 @@
     <string name="unlock_methods_empty_body">Une méthode est ce qui lève un blocage : un QR code sur le frigo, un tag sur le bureau, ou un lieu où il faut se rendre.</string>
     <string name="unlock_methods_add">Nouvelle méthode</string>
     <string name="unlock_method_in_use">Utilisée par une règle</string>
+    <string name="unlock_method_delete_title">Supprimer cette méthode ?</string>
+    <string name="unlock_method_delete_body">%1$s ne pourra plus servir à garder une règle.</string>
     <string name="unlock_type_qr">QR code ou code-barres</string>
     <string name="unlock_type_qr_summary">Scannez un code pour l\'enregistrer, rescannez-le pour déverrouiller.</string>
     <string name="unlock_type_nfc">Tag NFC</string>
@@ -158,15 +203,23 @@
     <string name="method_name_label">Nom</string>
     <string name="method_name_placeholder">QR sur le frigo</string>
     <string name="method_capture_qr">Visez le code avec la caméra</string>
+    <string name="method_capture_qr_hint">N\'importe quel QR code ou code-barres fait l\'affaire : une carte de fidélité, une étiquette de colis, quelque chose d\'imprimé.</string>
     <string name="method_capture_qr_done">Code enregistré</string>
     <string name="method_capture_nfc">Maintenez le tag contre le dos du téléphone</string>
+    <string name="method_capture_nfc_hint">Seul l\'identifiant du tag est lu. Un tag déjà utilisé pour autre chose continue de fonctionner.</string>
     <string name="method_capture_nfc_done">Tag enregistré</string>
-    <string name="method_capture_location">Enregistrer ce lieu</string>
-    <string name="method_capture_location_done">Lieu enregistré</string>
+    <string name="method_capture_again">Enregistrer autre chose</string>
+    <string name="method_capture_location">Utiliser ma position</string>
+    <string name="method_location_failed">Aucune position n\'a pu être lue. Vérifiez que la localisation est activée.</string>
+    <string name="method_recentre">Revenir sur moi</string>
+    <string name="method_refresh_position">Nouvelle lecture</string>
     <string name="method_radius">Rayon : %1$d m</string>
+    <string name="method_radius_hint">Assez large pour être atteignable, assez étroit pour que s\'y rendre reste une décision.</string>
     <string name="method_locating">Recherche de votre position…</string>
+    <string name="place_span">%1$d m</string>
+    <string name="place_picker_hint">Faites glisser ou touchez pour déplacer le point. Le point central est l\'endroit où se trouve votre téléphone.</string>
     <string name="permission_camera_rationale">Idle a besoin de la caméra pour lire le code. L\'image n\'est jamais enregistrée et ne quitte jamais votre téléphone.</string>
-    <string name="permission_location_rationale">Idle a besoin de votre position une seule fois, pour enregistrer le lieu. Elle reste sur votre téléphone et n\'est envoyée nulle part.</string>
+    <string name="permission_location_rationale">Idle a besoin de votre position une seule fois, pour situer la zone. Elle reste sur votre téléphone et n\'est envoyée nulle part.</string>
     <string name="permission_grant">Autoriser</string>
     <string name="permission_denied">Permission refusée. Vous pouvez l\'accorder dans les réglages Android.</string>
     <string name="nfc_unavailable">Ce téléphone n\'a pas de puce NFC.</string>

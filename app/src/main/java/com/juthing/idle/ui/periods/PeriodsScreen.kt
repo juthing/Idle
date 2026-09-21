@@ -12,12 +12,15 @@ import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
@@ -28,6 +31,7 @@ import com.juthing.idle.R
 import com.juthing.idle.core.ui.DurationFormat
 import com.juthing.idle.core.ui.components.EmptyState
 import com.juthing.idle.core.ui.components.RuleCard
+import com.juthing.idle.core.ui.tap
 
 /**
  * Lists the periods the user has set up.
@@ -42,15 +46,27 @@ fun PeriodsScreen(
     viewModel: PeriodsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val haptics = LocalHapticFeedback.current
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val resources = LocalResources.current
     val locale = LocalConfiguration.current.locales[0]
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.periods_title)) }) },
+        modifier = modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            LargeTopAppBar(
+                title = { Text(stringResource(R.string.periods_title)) },
+                scrollBehavior = scrollBehavior,
+            )
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { onEditPeriod(0) },
+                onClick = {
+                    haptics.tap()
+                    onEditPeriod(0)
+                },
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.periods_add)) },
             )

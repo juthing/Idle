@@ -53,6 +53,9 @@ android {
 
     buildFeatures {
         compose = true
+        // The About page shows the version the user is actually running, which is the only way a
+        // sideloaded build can be identified when something goes wrong.
+        buildConfig = true
     }
 
     androidResources {

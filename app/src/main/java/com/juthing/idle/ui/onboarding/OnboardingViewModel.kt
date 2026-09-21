@@ -22,6 +22,7 @@ import javax.inject.Inject
 data class OnboardingUiState(
     val usageAccessGranted: Boolean = false,
     val accessibilityEnabled: Boolean = false,
+    val overlayAllowed: Boolean = false,
     val notificationsGranted: Boolean = false,
     val accessibilityConsentGiven: Boolean = false,
 )
@@ -45,6 +46,7 @@ class OnboardingViewModel @Inject constructor(
         it.copy(
             usageAccessGranted = permissionChecker.hasUsageAccess(),
             accessibilityEnabled = permissionChecker.isAccessibilityServiceEnabled(),
+            overlayAllowed = permissionChecker.canDrawOverlays(),
             notificationsGranted = permissionChecker.hasNotificationPermission(),
         )
     }

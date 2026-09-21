@@ -34,7 +34,7 @@ import com.juthing.idle.data.system.PermissionChecker
 import kotlinx.coroutines.launch
 
 /** The steps of the first-run flow, in order. */
-private enum class OnboardingStep { WELCOME, USAGE, ACCESSIBILITY, NOTIFICATIONS, DONE }
+private enum class OnboardingStep { WELCOME, USAGE, ACCESSIBILITY, OVERLAY, NOTIFICATIONS, DONE }
 
 /**
  * Explains what Idle needs and why, one permission at a time.
@@ -93,6 +93,18 @@ fun OnboardingScreen(
                     onOpenSettings = {
                         context.startActivity(permissionChecker.accessibilitySettingsIntent())
                     },
+                    onSkip = goNext,
+                )
+
+                // Comes straight after the service: the two together are what makes a block
+                // appear, and granting one without the other produces an app that notices
+                // everything and shows nothing.
+                OnboardingStep.OVERLAY -> Step(
+                    title = stringResource(R.string.onboarding_overlay_title),
+                    body = stringResource(R.string.onboarding_overlay_body),
+                    granted = uiState.overlayAllowed,
+                    primaryLabel = stringResource(R.string.onboarding_open_settings),
+                    onPrimary = { context.startActivity(permissionChecker.overlaySettingsIntent()) },
                     onSkip = goNext,
                 )
 

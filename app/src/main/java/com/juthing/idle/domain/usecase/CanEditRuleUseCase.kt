@@ -2,6 +2,7 @@ package com.juthing.idle.domain.usecase
 
 import com.juthing.idle.core.time.IdleClock
 import com.juthing.idle.domain.model.Rule
+import com.juthing.idle.domain.repository.UnlockGrantRepository
 import com.juthing.idle.domain.repository.UsageRepository
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ import javax.inject.Inject
  */
 class CanEditRuleUseCase @Inject constructor(
     private val usageRepository: UsageRepository,
+    private val grantRepository: UnlockGrantRepository,
     private val scheduleEvaluator: ScheduleEvaluator,
     private val timerEvaluator: TimerEvaluator,
     private val clock: IdleClock,
@@ -24,9 +26,14 @@ class CanEditRuleUseCase @Inject constructor(
      *
      * A disabled rule is never active, so it can always be edited: turning a rule off is itself
      * guarded, which is what keeps that from being a way around the lock.
+     *
+     * A rule the user has just unlocked from inside Idle is editable for as long as that unlock
+     * lasts. The friction is in having had to scan, tap or walk somewhere — not in refusing to
+     * let them change their mind afterwards.
      */
     suspend operator fun invoke(rule: Rule): Boolean {
         if (!rule.enabled) return true
+        if (rule.id != 0L && grantRepository.activeEditGrantFor(rule.id) != null) return true
         return when (rule) {
             is Rule.Period -> !scheduleEvaluator.isActiveAt(rule, clock.nowDateTime())
             is Rule.Timer -> {
