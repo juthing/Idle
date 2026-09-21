@@ -153,7 +153,7 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 
 - [x] Étape 0 — squelette Gradle, thème Material 3, typographie, navigation à trois onglets, i18n
 - [x] Étape 1 — couche data (Room, DataStore, repositories)
-- [ ] Étape 2 — couche domain et tests unitaires
+- [x] Étape 2 — couche domain et tests unitaires
 - [ ] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
 - [ ] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
 - [ ] Étape 5 — moteur de blocage et mode urgence
