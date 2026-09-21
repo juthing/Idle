@@ -12,7 +12,9 @@ import com.juthing.idle.core.ui.theme.IdleTheme
 import com.juthing.idle.data.system.NfcTagReader
 import com.juthing.idle.domain.repository.ThemeMode
 import com.juthing.idle.ui.IdleApp
+import com.juthing.idle.data.system.PermissionChecker
 import com.juthing.idle.ui.MainViewModel
+import com.juthing.idle.ui.onboarding.OnboardingScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,6 +32,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var nfcTagReader: NfcTagReader
 
+    @Inject
+    lateinit var permissionChecker: PermissionChecker
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -41,8 +46,19 @@ class MainActivity : ComponentActivity() {
                 ThemeMode.DARK -> true
             }
 
+            val onboardingCompleted by viewModel.onboardingCompleted.collectAsStateWithLifecycle()
+
             IdleTheme(darkTheme = darkTheme) {
-                IdleApp(nfcTagReader = nfcTagReader)
+                when (onboardingCompleted) {
+                    // Still loading: draw nothing rather than flash a screen and replace it.
+                    null -> Unit
+                    false -> OnboardingScreen(permissionChecker = permissionChecker)
+
+                    true -> IdleApp(
+                        nfcTagReader = nfcTagReader,
+                        permissionChecker = permissionChecker,
+                    )
+                }
             }
         }
     }

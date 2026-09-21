@@ -87,6 +87,34 @@
     <string name="settings_about">À propos</string>
     <string name="settings_about_summary">Gratuit, sans publicité, sans suivi. Rien ne quitte votre téléphone.</string>
 
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Idle</string>
+    <string name="onboarding_welcome_body">Posez vos propres limites, et faites en sorte que les lever demande un vrai geste : scanner un code, approcher un tag, ou se déplacer quelque part.</string>
+    <string name="onboarding_usage_title">Statistiques d\'utilisation</string>
+    <string name="onboarding_usage_body">Idle a besoin de l\'accès aux statistiques pour savoir combien de temps vous avez passé dans une application aujourd\'hui. Sans cela, les limites quotidiennes ne peuvent pas être décomptées.</string>
+    <string name="onboarding_accessibility_title">Savoir quelle application est ouverte</string>
+    <string name="onboarding_accessibility_body">Pour afficher l\'écran de blocage au bon moment, Idle utilise un service d\'accessibilité. Il lit une seule chose : le nom de l\'application que vous venez d\'ouvrir.</string>
+    <string name="onboarding_accessibility_detail">Il ne peut pas lire ce qui est affiché, ce que vous tapez, ni le contenu de vos applications. Rien n\'est conservé en dehors de vos propres règles, et rien n\'est jamais envoyé nulle part : Idle n\'a même pas la permission d\'accéder à internet.</string>
+    <string name="onboarding_accessibility_consent">J\'ai compris et j\'accepte</string>
+    <string name="onboarding_notifications_title">Notifications</string>
+    <string name="onboarding_notifications_body">Pendant qu\'une application minutée est ouverte, Idle affiche une notification persistante. Android l\'exige pour que le décompte continue.</string>
+    <string name="onboarding_done_title">C\'est prêt</string>
+    <string name="onboarding_done_body">Créez une méthode de déverrouillage, puis votre première période ou votre premier minuteur.</string>
+    <string name="onboarding_open_settings">Ouvrir les réglages Android</string>
+    <string name="onboarding_next">Suivant</string>
+    <string name="onboarding_skip">Plus tard</string>
+    <string name="onboarding_start">Commencer</string>
+    <string name="onboarding_granted">Accordé</string>
+
+    <!-- État des permissions -->
+    <string name="settings_permissions">Permissions</string>
+    <string name="permission_usage_access">Accès aux statistiques</string>
+    <string name="permission_accessibility">Service d\'accessibilité</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="permission_status_granted">Accordée</string>
+    <string name="permission_status_missing">Manquante</string>
+    <string name="permission_accessibility_off_warning">Le service d\'accessibilité est désactivé : plus rien n\'est bloqué.</string>
+
     <!-- Service d\'accessibilité -->
     <string name="accessibility_service_description">Idle utilise ce service pour savoir quelle application vient d\'être ouverte, afin d\'afficher l\'écran de blocage pour celles que vous avez choisi de limiter. Il ne lit que le nom de l\'application, jamais ce qui est affiché, et rien ne quitte votre téléphone.</string>
 

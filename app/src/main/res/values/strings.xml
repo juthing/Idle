@@ -85,6 +85,34 @@
     <string name="settings_about">About</string>
     <string name="settings_about_summary">Free, no ads, no tracking. Nothing leaves your device.</string>
 
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Idle</string>
+    <string name="onboarding_welcome_body">Set your own limits, and make lifting them take a real gesture: scanning a code, tapping a tag, or walking somewhere.</string>
+    <string name="onboarding_usage_title">Usage statistics</string>
+    <string name="onboarding_usage_body">Idle needs usage access to know how long you have spent in an app today. Without it, daily limits cannot be counted.</string>
+    <string name="onboarding_accessibility_title">Noticing which app is open</string>
+    <string name="onboarding_accessibility_body">To show the block screen at the right moment, Idle uses an accessibility service. It reads one thing: the name of the app you just opened.</string>
+    <string name="onboarding_accessibility_detail">It cannot read what is on your screen, what you type, or anything inside your apps. Nothing is stored beyond your own rules, and nothing is ever sent anywhere: Idle has no internet permission at all.</string>
+    <string name="onboarding_accessibility_consent">I understand and agree</string>
+    <string name="onboarding_notifications_title">Notifications</string>
+    <string name="onboarding_notifications_body">While a timed app is open, Idle shows an ongoing notification. Android requires it for the countdown to keep running.</string>
+    <string name="onboarding_done_title">Ready</string>
+    <string name="onboarding_done_body">Create an unlock method, then your first period or timer.</string>
+    <string name="onboarding_open_settings">Open Android settings</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_start">Start</string>
+    <string name="onboarding_granted">Granted</string>
+
+    <!-- Permission status -->
+    <string name="settings_permissions">Permissions</string>
+    <string name="permission_usage_access">Usage access</string>
+    <string name="permission_accessibility">Accessibility service</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="permission_status_granted">Granted</string>
+    <string name="permission_status_missing">Missing</string>
+    <string name="permission_accessibility_off_warning">The accessibility service is off, so nothing is being blocked.</string>
+
     <!-- Accessibility service -->
     <string name="accessibility_service_description">Idle uses this service to notice which app you just opened, so it can show the block screen for the apps you chose to limit. It reads only the app\'s name, never what is on screen, and nothing leaves your phone.</string>
 

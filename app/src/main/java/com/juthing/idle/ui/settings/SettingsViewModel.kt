@@ -2,6 +2,7 @@ package com.juthing.idle.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.juthing.idle.data.system.PermissionChecker
 import com.juthing.idle.domain.repository.SettingsRepository
 import com.juthing.idle.domain.repository.ThemeMode
 import com.juthing.idle.domain.usecase.AnyRuleActiveUseCase
@@ -25,6 +26,9 @@ data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val unlockDurationMinutes: Int = SettingsRepository.DEFAULT_UNLOCK_DURATION_MINUTES,
     val unlockDurationLocked: Boolean = false,
+    val usageAccessGranted: Boolean = false,
+    val accessibilityEnabled: Boolean = false,
+    val notificationsGranted: Boolean = false,
 )
 
 /** Drives the settings screen. */
@@ -32,8 +36,15 @@ data class SettingsUiState(
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val anyRuleActive: AnyRuleActiveUseCase,
+    private val permissionChecker: PermissionChecker,
 ) : ViewModel() {
 
+    /**
+     * Bumped on resume.
+     *
+     * Permissions and rule activity both change outside this screen — in Android settings, or
+     * simply because a period started — so neither can be observed and both are re-read instead.
+     */
     private val lockRefresh = MutableStateFlow(0)
 
     val uiState: StateFlow<SettingsUiState> = combine(
@@ -45,6 +56,9 @@ class SettingsViewModel @Inject constructor(
             themeMode = theme,
             unlockDurationMinutes = minutes,
             unlockDurationLocked = anyRuleActive(),
+            usageAccessGranted = permissionChecker.hasUsageAccess(),
+            accessibilityEnabled = permissionChecker.isAccessibilityServiceEnabled(),
+            notificationsGranted = permissionChecker.hasNotificationPermission(),
         )
     }.stateIn(
         scope = viewModelScope,
@@ -63,8 +77,8 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /** Re-checks whether a rule became active while the screen was open. */
-    fun refreshLockState() {
+    /** Re-reads permissions and rule activity, which can both change outside this screen. */
+    fun refresh() {
         lockRefresh.value += 1
     }
 }

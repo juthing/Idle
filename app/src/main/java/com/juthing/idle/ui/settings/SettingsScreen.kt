@@ -25,25 +25,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.juthing.idle.R
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.juthing.idle.core.ui.DurationFormat
+import com.juthing.idle.data.system.PermissionChecker
 import com.juthing.idle.domain.repository.ThemeMode
 
 /** Appearance, blocking behaviour, and the way into the unlock methods. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    permissionChecker: PermissionChecker,
     onOpenUnlockMethods: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val resources = LocalResources.current
+    val context = LocalContext.current
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.refresh()
+        onPauseOrDispose { }
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -55,6 +65,17 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 32.dp),
         ) {
+            // A disabled service means nothing is being blocked at all, which the user has to
+            // know before anything else on this screen.
+            if (!uiState.accessibilityEnabled) {
+                Text(
+                    text = stringResource(R.string.permission_accessibility_off_warning),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                )
+            }
+
             SectionTitle(stringResource(R.string.settings_appearance))
             Column(modifier = Modifier.selectableGroup()) {
                 ThemeMode.entries.forEach { mode ->
@@ -119,6 +140,25 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
+            SectionTitle(stringResource(R.string.settings_permissions))
+            PermissionRow(
+                title = stringResource(R.string.permission_usage_access),
+                granted = uiState.usageAccessGranted,
+                onClick = { context.startActivity(permissionChecker.usageAccessIntent()) },
+            )
+            PermissionRow(
+                title = stringResource(R.string.permission_accessibility),
+                granted = uiState.accessibilityEnabled,
+                onClick = { context.startActivity(permissionChecker.accessibilitySettingsIntent()) },
+            )
+            PermissionRow(
+                title = stringResource(R.string.permission_notifications),
+                granted = uiState.notificationsGranted,
+                onClick = { },
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             SectionTitle(stringResource(R.string.settings_about))
             Text(
                 text = stringResource(R.string.settings_about_summary),
@@ -127,6 +167,31 @@ fun SettingsScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
+    }
+}
+
+/** One permission and whether it is in place; tapping opens where Android grants it. */
+@Composable
+private fun PermissionRow(title: String, granted: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = !granted, onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+        Text(
+            text = stringResource(
+                if (granted) R.string.permission_status_granted else R.string.permission_status_missing,
+            ),
+            style = MaterialTheme.typography.labelLarge,
+            color = if (granted) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.error
+            },
+        )
     }
 }
 

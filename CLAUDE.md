@@ -126,6 +126,12 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
   session un peu tôt.
 - **`specialUse` est le type honnête du foreground service** — Idle ne lit pas de média, ne suit
   pas de position et ne synchronise rien.
+- **Aucune permission n'est obligatoire pour terminer l'onboarding** — refuser le service
+  d'accessibilité laisse une app fonctionnelle pour tout le reste, et l'écran Réglages continue de
+  dire ce qui manque plutôt que de retenir l'utilisateur en otage sur l'onboarding.
+- **Le bouton vers les réglages d'accessibilité est inaccessible tant que le consentement n'est pas
+  donné** — c'est exactement ce qu'exige la politique Google Play, et c'est aussi la seule façon
+  honnête de présenter la chose.
 
 ## Conventions
 
@@ -192,5 +198,5 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
 - [x] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
 - [x] Étape 5 — moteur de blocage et mode urgence
-- [ ] Étape 6 — onboarding et permissions
+- [x] Étape 6 — onboarding et permissions
 - [ ] Étape 7 — workers, verrouillage de l'édition, finitions

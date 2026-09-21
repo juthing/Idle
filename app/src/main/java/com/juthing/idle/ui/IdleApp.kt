@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.juthing.idle.data.system.NfcTagReader
+import com.juthing.idle.data.system.PermissionChecker
 import com.juthing.idle.ui.navigation.CreateMethodRoute
 import com.juthing.idle.ui.navigation.PeriodsRoute
 import com.juthing.idle.ui.navigation.RuleEditRoute
@@ -44,6 +45,7 @@ import com.juthing.idle.ui.unlockmethods.UnlockMethodsScreen
 @Composable
 fun IdleApp(
     nfcTagReader: NfcTagReader,
+    permissionChecker: PermissionChecker,
     navController: NavHostController = rememberNavController(),
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -95,6 +97,7 @@ fun IdleApp(
             }
             composable<SettingsRoute> {
                 SettingsScreen(
+                    permissionChecker = permissionChecker,
                     onOpenUnlockMethods = { navController.navigate(UnlockMethodsRoute) },
                 )
             }
