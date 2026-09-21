@@ -28,6 +28,8 @@ import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -43,6 +45,7 @@ import com.juthing.idle.core.ui.step
 import com.juthing.idle.core.ui.tap
 import com.juthing.idle.core.ui.toggle
 import com.juthing.idle.domain.model.UnlockMethod
+import kotlinx.coroutines.flow.drop
 import java.time.DayOfWeek
 import java.util.Locale
 
@@ -307,6 +310,15 @@ fun TimePickerSheet(
         initialMinute = initialMinuteOfDay % 60,
         is24Hour = true,
     )
+
+    // One tick per minute the hand passes, the way a real dial would feel. The component reports
+    // nothing on change, so the value is watched instead; the first emission is the initial time
+    // arriving, which nobody turned a hand to reach.
+    LaunchedEffect(state) {
+        snapshotFlow { state.hour * 60 + state.minute }
+            .drop(1)
+            .collect { haptics.step() }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
