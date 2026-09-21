@@ -19,18 +19,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,8 +39,12 @@ import com.juthing.idle.core.ui.tap
  * The frame every settings page wears.
  *
  * Settings are now one page per subject rather than one long scroll, which only works if the
- * pages are visibly the same object: same large title collapsing into a small one, same back
- * arrow, same margins. This is that frame.
+ * pages are visibly the same object: same compact title, same back arrow, same margins. This is
+ * that frame.
+ *
+ * The bar is the small one on purpose. A large or medium Material 3 app bar reserves 112 to 152dp
+ * before a single row is drawn, which on a phone reads as an empty band above every screen rather
+ * than as breathing room.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,17 +54,12 @@ fun SettingsPage(
     modifier: Modifier = Modifier,
     content: @Composable (Modifier) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.fillMaxSize(),
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = { Text(title) },
                 navigationIcon = { BackButton(onBack) },
-                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->

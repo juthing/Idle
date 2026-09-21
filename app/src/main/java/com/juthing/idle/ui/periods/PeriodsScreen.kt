@@ -12,14 +12,12 @@ import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalResources
@@ -47,18 +45,14 @@ fun PeriodsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val haptics = LocalHapticFeedback.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val resources = LocalResources.current
     val locale = LocalConfiguration.current.locales[0]
 
     Scaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.fillMaxSize(),
         topBar = {
-            LargeTopAppBar(
+            TopAppBar(
                 title = { Text(stringResource(R.string.periods_title)) },
-                scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
