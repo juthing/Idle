@@ -85,6 +85,21 @@
                 android:value="Counts foreground time for the daily app limits the user set, so a limit takes effect the moment it is reached." />
         </service>
 
+        <!--
+            Idle provides its own WorkManager configuration so that workers can be injected, so
+            the default initializer is removed rather than left to race with it.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <service
             android:name=".blocking.IdleAccessibilityService"
             android:exported="false"

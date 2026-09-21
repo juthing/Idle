@@ -132,6 +132,11 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
 - **Le bouton vers les réglages d'accessibilité est inaccessible tant que le consentement n'est pas
   donné** — c'est exactement ce qu'exige la politique Google Play, et c'est aussi la seule façon
   honnête de présenter la chose.
+- **Pas de reset de minuit** — les lignes d'usage sont indexées par date et le compteur d'urgence
+  porte le jour auquel il appartient, donc un nouveau jour démarre déjà à zéro. Un worker dont
+  l'app dépendrait pour être correcte à minuit serait un worker sur lequel on ne peut pas compter.
+  WorkManager ne fait donc que du ménage : purge des vieilles lignes et des autorisations
+  expirées, sous contrainte de batterie.
 
 ## Conventions
 
@@ -199,4 +204,4 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
 - [x] Étape 5 — moteur de blocage et mode urgence
 - [x] Étape 6 — onboarding et permissions
-- [ ] Étape 7 — workers, verrouillage de l'édition, finitions
+- [x] Étape 7 — workers, verrouillage de l'édition, finitions
