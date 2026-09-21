@@ -15,7 +15,9 @@ android {
     defaultConfig {
         applicationId = "com.juthing.idle"
         minSdk = 29
-        targetSdk = 36
+        // Adopted now rather than retrofitted later: nothing in the app yet relies on legacy
+        // behaviour, and Google Play requires 36 or higher in any case.
+        targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
 

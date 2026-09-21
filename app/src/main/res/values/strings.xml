@@ -7,6 +7,57 @@
     <string name="nav_timers">Timers</string>
     <string name="nav_settings">Settings</string>
 
+    <!-- Shared -->
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_back">Back</string>
+    <string name="action_done">Done</string>
+    <string name="rule_locked">Locked while this rule is running. Unlock it to make changes.</string>
+    <plurals name="app_count">
+        <item quantity="one">%d app</item>
+        <item quantity="other">%d apps</item>
+    </plurals>
+
+    <!-- Rule editing -->
+    <string name="rule_name_label">Name</string>
+    <string name="rule_name_placeholder_period">Night</string>
+    <string name="rule_name_placeholder_timer">Video</string>
+    <string name="rule_apps_label">Apps</string>
+    <string name="rule_apps_none">Choose apps</string>
+    <string name="rule_unlock_label">Unlock method</string>
+    <string name="rule_unlock_none">Choose a method</string>
+    <string name="rule_unlock_required">Every rule needs an unlock method. Create one in Settings first.</string>
+    <string name="rule_days_label">Days</string>
+    <string name="rule_start_label">From</string>
+    <string name="rule_end_label">To</string>
+    <string name="rule_crosses_midnight">Runs overnight, into the next morning.</string>
+    <string name="rule_limit_label">Daily limit</string>
+    <string name="rule_limit_value">%1$s per day</string>
+    <string name="new_period_title">New period</string>
+    <string name="edit_period_title">Edit period</string>
+    <string name="new_timer_title">New timer</string>
+    <string name="edit_timer_title">Edit timer</string>
+
+    <!-- App picker -->
+    <string name="app_picker_title">Choose apps</string>
+    <string name="app_picker_search">Search apps</string>
+    <plurals name="app_picker_selected">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+
+    <!-- Duration and time formats -->
+    <string name="duration_hours_minutes">%1$dh %2$02d</string>
+    <string name="duration_hours">%1$dh</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="time_range">%1$s – %2$s</string>
+    <string name="every_day">Every day</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="weekends">Weekends</string>
+    <string name="timer_progress">%1$s of %2$s used</string>
+    <string name="timer_spent">Quota spent</string>
+    <string name="rule_disabled">Off</string>
+
     <!-- Periods -->
     <string name="periods_title">Periods</string>
     <string name="periods_empty_title">No periods yet</string>

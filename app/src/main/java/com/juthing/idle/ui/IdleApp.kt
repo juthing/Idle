@@ -18,10 +18,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.juthing.idle.ui.navigation.PeriodsRoute
+import com.juthing.idle.ui.navigation.RuleEditRoute
 import com.juthing.idle.ui.navigation.SettingsRoute
 import com.juthing.idle.ui.navigation.TimersRoute
 import com.juthing.idle.ui.navigation.TopLevelDestination
 import com.juthing.idle.ui.periods.PeriodsScreen
+import com.juthing.idle.ui.ruleedit.RuleEditScreen
 import com.juthing.idle.ui.settings.SettingsScreen
 import com.juthing.idle.ui.timers.TimersScreen
 
@@ -68,9 +70,24 @@ fun IdleApp(
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            composable<PeriodsRoute> { PeriodsScreen() }
-            composable<TimersRoute> { TimersScreen() }
+            composable<PeriodsRoute> {
+                PeriodsScreen(
+                    onEditPeriod = { ruleId ->
+                        navController.navigate(RuleEditRoute(ruleId = ruleId, isPeriod = true))
+                    },
+                )
+            }
+            composable<TimersRoute> {
+                TimersScreen(
+                    onEditTimer = { ruleId ->
+                        navController.navigate(RuleEditRoute(ruleId = ruleId, isPeriod = false))
+                    },
+                )
+            }
             composable<SettingsRoute> { SettingsScreen() }
+            composable<RuleEditRoute> {
+                RuleEditScreen(onClose = { navController.popBackStack() })
+            }
         }
     }
 }

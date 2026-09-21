@@ -2,7 +2,9 @@
 # All versions verified against Google Maven / Maven Central on 2026-09-21.
 [versions]
 agp = "9.4.1"
-kotlin = "2.3.20"
+# Pinned to the Kotlin that AGP 9.4 compiles with. A newer plugin than the compiler
+# would be a silent mismatch, so Lint's NewerVersionAvailable hint is declined here.
+kotlin = "2.3.21"
 ksp = "2.3.12"
 
 coreKtx = "1.19.0"
@@ -74,7 +76,6 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

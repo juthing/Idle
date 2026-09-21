@@ -7,6 +7,59 @@
     <string name="nav_timers">Minuteurs</string>
     <string name="nav_settings">Réglages</string>
 
+    <!-- Commun -->
+    <string name="action_save">Enregistrer</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_back">Retour</string>
+    <string name="action_done">Terminé</string>
+    <string name="rule_locked">Verrouillé tant que la règle est en cours. Déverrouillez-la pour la modifier.</string>
+    <plurals name="app_count">
+        <item quantity="one">%d application</item>
+        <item quantity="many">%d applications</item>
+        <item quantity="other">%d applications</item>
+    </plurals>
+
+    <!-- Édition d\'une règle -->
+    <string name="rule_name_label">Nom</string>
+    <string name="rule_name_placeholder_period">Nuit</string>
+    <string name="rule_name_placeholder_timer">Vidéo</string>
+    <string name="rule_apps_label">Applications</string>
+    <string name="rule_apps_none">Choisir des applications</string>
+    <string name="rule_unlock_label">Méthode de déverrouillage</string>
+    <string name="rule_unlock_none">Choisir une méthode</string>
+    <string name="rule_unlock_required">Chaque règle exige une méthode de déverrouillage. Créez-en une dans les réglages.</string>
+    <string name="rule_days_label">Jours</string>
+    <string name="rule_start_label">De</string>
+    <string name="rule_end_label">À</string>
+    <string name="rule_crosses_midnight">Se poursuit jusqu\'au lendemain matin.</string>
+    <string name="rule_limit_label">Limite quotidienne</string>
+    <string name="rule_limit_value">%1$s par jour</string>
+    <string name="new_period_title">Nouvelle période</string>
+    <string name="edit_period_title">Modifier la période</string>
+    <string name="new_timer_title">Nouveau minuteur</string>
+    <string name="edit_timer_title">Modifier le minuteur</string>
+
+    <!-- Sélecteur d\'applications -->
+    <string name="app_picker_title">Choisir des applications</string>
+    <string name="app_picker_search">Rechercher une application</string>
+    <plurals name="app_picker_selected">
+        <item quantity="one">%d sélectionnée</item>
+        <item quantity="many">%d sélectionnées</item>
+        <item quantity="other">%d sélectionnées</item>
+    </plurals>
+
+    <!-- Formats de durée et d\'heure -->
+    <string name="duration_hours_minutes">%1$d h %2$02d</string>
+    <string name="duration_hours">%1$d h</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="time_range">%1$s – %2$s</string>
+    <string name="every_day">Tous les jours</string>
+    <string name="weekdays">En semaine</string>
+    <string name="weekends">Le week-end</string>
+    <string name="timer_progress">%1$s sur %2$s utilisés</string>
+    <string name="timer_spent">Quota épuisé</string>
+    <string name="rule_disabled">Désactivée</string>
+
     <!-- Périodes -->
     <string name="periods_title">Périodes</string>
     <string name="periods_empty_title">Aucune période</string>

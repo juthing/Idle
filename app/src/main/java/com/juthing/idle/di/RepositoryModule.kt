@@ -1,10 +1,12 @@
 package com.juthing.idle.di
 
 import com.juthing.idle.data.preferences.SettingsDataStore
+import com.juthing.idle.data.system.InstalledAppsDataSource
 import com.juthing.idle.data.repository.RuleRepositoryImpl
 import com.juthing.idle.data.repository.UnlockGrantRepositoryImpl
 import com.juthing.idle.data.repository.UnlockMethodRepositoryImpl
 import com.juthing.idle.data.repository.UsageRepositoryImpl
+import com.juthing.idle.domain.repository.InstalledAppsRepository
 import com.juthing.idle.domain.repository.RuleRepository
 import com.juthing.idle.domain.repository.SettingsRepository
 import com.juthing.idle.domain.repository.UnlockGrantRepository
@@ -40,4 +42,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: SettingsDataStore): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindInstalledAppsRepository(
+        impl: InstalledAppsDataSource,
+    ): InstalledAppsRepository
 }

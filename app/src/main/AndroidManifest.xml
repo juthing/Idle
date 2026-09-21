@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+        Idle needs to list the apps the user can launch, so that they can pick which ones a rule
+        covers. This intent filter is the narrow alternative to QUERY_ALL_PACKAGES, which Google
+        Play treats as a sensitive permission and which Idle does not need.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:name=".IdleApplication"
         android:allowBackup="false"
@@ -15,7 +27,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Idle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

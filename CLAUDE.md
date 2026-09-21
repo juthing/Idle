@@ -48,11 +48,11 @@ une zone précise.
 | CameraX + ZXing | 1.6.2 / 3.5.4 | scan des QR codes et codes-barres |
 | Navigation Compose | 2.10.1 | navigation type-safe (kotlinx.serialization) |
 
-`minSdk` 29 · `compileSdk` 37.2 · `targetSdk` 36.
+`minSdk` 29 · `compileSdk` 37.2 · `targetSdk` 37.
 
-`compileSdk` est en avance sur `targetSdk` : les artefacts AndroidX de fin 2026 exigent d'être
-compilés contre l'API 37, alors que `targetSdk` 36 reste le plancher demandé par Google Play et
-n'expose pas encore l'app aux changements de comportement d'Android 17.
+Les versions des plugins Kotlin sont alignées sur le compilateur qu'embarque AGP 9.4. Un plugin
+plus récent que le compilateur serait une incompatibilité silencieuse, donc l'avertissement
+`NewerVersionAvailable` de Lint est refusé sciemment : c'est le seul qui reste.
 
 ## Architecture
 
@@ -91,6 +91,14 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
   fabriquer le code manquant.
 - **Aucune sauvegarde** (`allowBackup=false`) — restaurer l'état de blocage sur un autre appareil
   n'a pas de sens, et les secrets ne doivent pas voyager.
+- **`<queries>` plutôt que `QUERY_ALL_PACKAGES`** — lister les apps lançables suffit à alimenter
+  le sélecteur. `QUERY_ALL_PACKAGES` est une permission sensible côté Play, qu'Idle n'a pas besoin
+  de demander.
+- **Les sélecteurs sont des feuilles, pas des destinations** — choisir des apps, une méthode ou une
+  heure se fait dans une `ModalBottomSheet` au-dessus de l'écran d'édition. Passer par la
+  navigation obligerait à renvoyer un résultat et risquerait de perdre le brouillon en cours.
+- **Idle ne peut pas se bloquer elle-même** — l'app est filtrée du sélecteur : la bloquer
+  enfermerait l'utilisateur hors du seul écran d'où un blocage peut être levé.
 
 ## Conventions
 
@@ -154,7 +162,7 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 0 — squelette Gradle, thème Material 3, typographie, navigation à trois onglets, i18n
 - [x] Étape 1 — couche data (Room, DataStore, repositories)
 - [x] Étape 2 — couche domain et tests unitaires
-- [ ] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
+- [x] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
 - [ ] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
 - [ ] Étape 5 — moteur de blocage et mode urgence
 - [ ] Étape 6 — onboarding et permissions

@@ -23,6 +23,16 @@ data object TimersRoute
 data object SettingsRoute
 
 /**
+ * The screen that creates or edits one rule.
+ *
+ * @property ruleId the rule being edited, or `0` to create a new one.
+ * @property isPeriod whether the rule is a period; a timer otherwise. Carried in the route so the
+ *   screen knows which fields to show before anything is loaded.
+ */
+@Serializable
+data class RuleEditRoute(val ruleId: Long = 0, val isPeriod: Boolean)
+
+/**
  * A tab of the bottom navigation bar.
  *
  * @property route the type-safe navigation route this tab points at.
