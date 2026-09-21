@@ -32,6 +32,10 @@ class UsageRepositoryImpl @Inject constructor(
             rows.associate { it.packageName to it.foregroundMillis }
         }
 
+    override suspend fun todayUsage(): Map<String, Long> =
+        dao.getAllForDate(clock.today().toString())
+            .associate { it.packageName to it.foregroundMillis }
+
     override suspend fun setUsage(packageName: String, totalMillis: Long) {
         dao.upsert(
             DailyUsageEntity(

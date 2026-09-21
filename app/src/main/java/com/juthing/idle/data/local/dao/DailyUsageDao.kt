@@ -14,6 +14,9 @@ interface DailyUsageDao {
     suspend fun getForDate(date: String, packageNames: Collection<String>): List<DailyUsageEntity>
 
     @Query("SELECT * FROM daily_usage WHERE date = :date")
+    suspend fun getAllForDate(date: String): List<DailyUsageEntity>
+
+    @Query("SELECT * FROM daily_usage WHERE date = :date")
     fun observeForDate(date: String): Flow<List<DailyUsageEntity>>
 
     /**

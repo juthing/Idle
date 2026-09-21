@@ -15,6 +15,9 @@ interface UsageRepository {
     /** Today's totals per package, for the progress shown on the Timers screen. */
     fun observeTodayUsage(): Flow<Map<String, Long>>
 
+    /** Today's totals per package, read once. */
+    suspend fun todayUsage(): Map<String, Long>
+
     /** Overwrites today's total for [packageName], used when reconciling with UsageStatsManager. */
     suspend fun setUsage(packageName: String, totalMillis: Long)
 

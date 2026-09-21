@@ -87,6 +87,33 @@
     <string name="settings_about">À propos</string>
     <string name="settings_about_summary">Gratuit, sans publicité, sans suivi. Rien ne quitte votre téléphone.</string>
 
+    <!-- Service d\'accessibilité -->
+    <string name="accessibility_service_description">Idle utilise ce service pour savoir quelle application vient d\'être ouverte, afin d\'afficher l\'écran de blocage pour celles que vous avez choisi de limiter. Il ne lit que le nom de l\'application, jamais ce qui est affiché, et rien ne quitte votre téléphone.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_timers">Minuteurs</string>
+    <string name="notification_counting_title">Décompte en cours</string>
+    <string name="notification_counting_body">Une application minutée est ouverte.</string>
+
+    <!-- Écran de blocage -->
+    <string name="block_title">Bloqué</string>
+    <string name="block_reason_period">%1$s est bloquée jusqu\'à %2$s.</string>
+    <string name="block_reason_timer">Vous avez utilisé vos %1$s de %2$s aujourd\'hui.</string>
+    <string name="block_unlock">Déverrouiller avec %1$s</string>
+    <string name="block_unlock_generic">Déverrouiller</string>
+    <string name="block_emergency">Urgence — %1$d min restantes aujourd\'hui</string>
+    <string name="block_emergency_spent">Plus de temps d\'urgence aujourd\'hui</string>
+    <string name="block_emergency_confirm">Utiliser votre temps d\'urgence restant ?</string>
+    <string name="block_close">Fermer l\'application</string>
+    <string name="block_scan_again">Rescannez le code</string>
+    <string name="block_tap_again">Réapprochez le tag</string>
+    <string name="block_go_to_place">Rendez-vous à %1$s et réessayez</string>
+    <string name="block_check_place">Vérifier ma position</string>
+    <string name="block_wrong_code">Ce n\'est pas le bon code.</string>
+    <string name="block_wrong_tag">Ce n\'est pas le bon tag.</string>
+    <string name="block_out_of_area">Vous n\'êtes pas au bon endroit.</string>
+    <string name="block_method_broken">Cette méthode est incomplète. Modifiez-la dans les réglages.</string>
+
     <!-- Méthodes de déverrouillage -->
     <string name="unlock_methods_title">Méthodes de déverrouillage</string>
     <string name="unlock_methods_empty_title">Aucune méthode</string>

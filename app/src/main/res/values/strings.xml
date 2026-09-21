@@ -85,6 +85,33 @@
     <string name="settings_about">About</string>
     <string name="settings_about_summary">Free, no ads, no tracking. Nothing leaves your device.</string>
 
+    <!-- Accessibility service -->
+    <string name="accessibility_service_description">Idle uses this service to notice which app you just opened, so it can show the block screen for the apps you chose to limit. It reads only the app\'s name, never what is on screen, and nothing leaves your phone.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_timers">Timers</string>
+    <string name="notification_counting_title">Counting time</string>
+    <string name="notification_counting_body">A timed app is open.</string>
+
+    <!-- Block screen -->
+    <string name="block_title">Blocked</string>
+    <string name="block_reason_period">%1$s is blocked until %2$s.</string>
+    <string name="block_reason_timer">You have used your %1$s of %2$s for today.</string>
+    <string name="block_unlock">Unlock with %1$s</string>
+    <string name="block_unlock_generic">Unlock</string>
+    <string name="block_emergency">Emergency — %1$d min left today</string>
+    <string name="block_emergency_spent">No emergency time left today</string>
+    <string name="block_emergency_confirm">Use your remaining emergency time?</string>
+    <string name="block_close">Close the app</string>
+    <string name="block_scan_again">Scan the code again</string>
+    <string name="block_tap_again">Tap the tag again</string>
+    <string name="block_go_to_place">Go to %1$s and try again</string>
+    <string name="block_check_place">Check my position</string>
+    <string name="block_wrong_code">That is not the right code.</string>
+    <string name="block_wrong_tag">That is not the right tag.</string>
+    <string name="block_out_of_area">You are not in the right place.</string>
+    <string name="block_method_broken">This unlock method is incomplete. Edit it in Settings.</string>
+
     <!-- Unlock methods -->
     <string name="unlock_methods_title">Unlock methods</string>
     <string name="unlock_methods_empty_title">No methods yet</string>

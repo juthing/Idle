@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
         Each permission serves exactly one unlock method and is requested when that method is
         created, not at first launch. The matching features are declared optional so that a device
         without a camera or an NFC chip can still install Idle and use the other methods.
     -->
+    <!--
+        Usage access is granted by the user in Android settings, not by a runtime prompt. It is
+        what lets Idle recover a day's totals after a reboot, when its own counting has a hole.
+    -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -47,6 +59,43 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+            The block screen. excludeFromRecents and noHistory keep it out of the recents list:
+            it is an interruption, not a place the user navigates back to.
+        -->
+        <activity
+            android:name=".blocking.BlockActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.Idle" />
+
+        <!--
+            Counts time only while a timed app is in the foreground. The specialUse type is the
+            honest one: Idle is not playing media, tracking location or syncing data.
+        -->
+        <service
+            android:name=".blocking.TimerCountingService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Counts foreground time for the daily app limits the user set, so a limit takes effect the moment it is reached." />
+        </service>
+
+        <service
+            android:name=".blocking.IdleAccessibilityService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
     </application>
 
 </manifest>

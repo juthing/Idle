@@ -4,6 +4,7 @@ import com.juthing.idle.domain.model.Rule
 import com.juthing.idle.domain.model.UnlockGrant
 import com.juthing.idle.domain.repository.RuleRepository
 import com.juthing.idle.domain.repository.SettingsRepository
+import com.juthing.idle.domain.repository.SystemUsageSource
 import com.juthing.idle.domain.repository.ThemeMode
 import com.juthing.idle.domain.repository.UnlockGrantRepository
 import com.juthing.idle.domain.repository.UsageRepository
@@ -113,6 +114,8 @@ class FakeUsageRepository(
 
     override fun observeTodayUsage(): Flow<Map<String, Long>> = flowOf(usage.toMap())
 
+    override suspend fun todayUsage(): Map<String, Long> = usage.toMap()
+
     override suspend fun setUsage(packageName: String, totalMillis: Long) {
         usage[packageName] = totalMillis
     }
@@ -151,4 +154,13 @@ class FakeSettingsRepository(
         }
         emergencyUsed += seconds
     }
+}
+
+/** A stand-in for the platform's usage figures, with whatever the test needs it to have seen. */
+class FakeSystemUsageSource(
+    private val permitted: Boolean = true,
+    private val usage: Map<String, Long> = emptyMap(),
+) : SystemUsageSource {
+    override fun hasPermission(): Boolean = permitted
+    override suspend fun usageFor(date: LocalDate): Map<String, Long> = usage
 }

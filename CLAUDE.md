@@ -113,6 +113,19 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
 - **Permissions demandées en contexte** — la caméra au moment de scanner, la position au moment
   d'enregistrer un lieu, avec la raison affichée juste à côté du bouton. Une demande hors contexte
   est une demande refusée.
+- **Un seul coordinateur** — tout ce qui observe le premier plan passe par `BlockingCoordinator`,
+  donc la décision de bloquer, celle de démarrer le décompte et celle de l'arrêter sont toujours
+  prises depuis la même vue de l'état.
+- **La raison du blocage est recalculée par l'écran de blocage** — elle n'est pas transportée dans
+  l'intent : une période peut se terminer entre la décision du service et l'affichage de l'écran,
+  et Idle ne doit jamais insister sur un blocage qui n'a plus lieu d'être.
+- **Le décompte écrit des incréments, pas des totaux** — un process tué entre deux ticks coûte au
+  plus un tick, pas toute la session.
+- **La réconciliation garde le plus grand des deux compteurs** — sous-compter rendrait du temps
+  déjà consommé, ce que le quota est précisément censé empêcher ; sur-compter termine juste une
+  session un peu tôt.
+- **`specialUse` est le type honnête du foreground service** — Idle ne lit pas de média, ne suit
+  pas de position et ne synchronise rien.
 
 ## Conventions
 
@@ -178,6 +191,6 @@ Le SDK Android est localisé par `local.properties` (`sdk.dir`), qui n'est pas v
 - [x] Étape 2 — couche domain et tests unitaires
 - [x] Étape 3 — UI Périodes et Minuteurs, sélecteur d'apps
 - [x] Étape 4 — méthodes de déverrouillage (QR, NFC, zone)
-- [ ] Étape 5 — moteur de blocage et mode urgence
+- [x] Étape 5 — moteur de blocage et mode urgence
 - [ ] Étape 6 — onboarding et permissions
 - [ ] Étape 7 — workers, verrouillage de l'édition, finitions
