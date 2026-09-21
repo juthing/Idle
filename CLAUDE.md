@@ -132,6 +132,11 @@ directement, et `domain` n'importe rien d'Android (hors annotations) pour rester
 - **Le bouton vers les réglages d'accessibilité est inaccessible tant que le consentement n'est pas
   donné** — c'est exactement ce qu'exige la politique Google Play, et c'est aussi la seule façon
   honnête de présenter la chose.
+- **Clé de debug committée** (`app/debug.keystore`) — sans elle, chaque build CI signerait avec une
+  clé différente et Android refuserait d'installer une mise à jour par-dessus la précédente, ce qui
+  obligerait à désinstaller et perdrait toutes les règles de l'utilisateur à chaque build. C'est une
+  clé de **debug** : la clé de signature de publication n'ira jamais dans le dépôt, elle passera par
+  les secrets GitHub.
 - **Pas de reset de minuit** — les lignes d'usage sont indexées par date et le compteur d'urgence
   porte le jour auquel il appartient, donc un nouveau jour démarre déjà à zéro. Un worker dont
   l'app dépendrait pour être correcte à minuit serait un worker sur lequel on ne peut pas compter.
@@ -181,6 +186,14 @@ Idle n'est **pas** un outil d'accessibilité. Avant toute publication :
   l'ouverture de l'app, l'écran de disclosure, l'acceptation et le refus, puis la fonctionnalité ;
 - `targetSdk` 36 minimum (obligatoire depuis le 31 août 2026) ;
 - garder `accessibility_service_config.xml` au strict nécessaire.
+
+## Distribution
+
+Chaque push sur `main` ou `claude/**` déclenche `.github/workflows/build.yml` : tests, lint, build,
+puis publication de l'APK de debug sur la release `dev`. C'est de là que l'app s'installe sur un
+téléphone, sans chaîne de build locale. `INSTALL.md` documente la procédure côté téléphone, dont
+l'étape des **paramètres restreints** d'Android 13+, sans laquelle le service d'accessibilité ne
+peut pas être activé pour une app installée hors Play Store.
 
 ## Commandes
 

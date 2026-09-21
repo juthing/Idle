@@ -1,0 +1,75 @@
+# Builds Idle and publishes an installable APK.
+#
+# The point of this workflow is that Jules does not need an Android toolchain on his own machine:
+# GitHub builds the APK and attaches it to a release, which a phone browser can download and
+# install directly. An artifact alone would not do — artifacts download as a .zip and require
+# being signed in, which phones handle badly.
+name: Build
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to create and update the "dev" release
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v4
+
+      # The runner image ships an Android SDK, but not necessarily the platform this project
+      # compiles against, so it is installed explicitly rather than hoped for.
+      - name: Install the SDK platform this project needs
+        run: sdkmanager "platforms;android-37.2" "build-tools;36.0.0"
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # Tests and lint run before packaging: an APK that fails either is not worth installing.
+      - name: Test and lint
+        run: ./gradlew testDebugUnitTest lintDebug
+
+      - name: Build the debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Name the APK after the app
+        run: mv app/build/outputs/apk/debug/app-debug.apk Idle-debug.apk
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Idle-debug-apk
+          path: Idle-debug.apk
+
+      # The release is the one a phone can actually use: a direct .apk link, no zip, no sign-in
+      # dance. The "dev" tag is reused, so there is always exactly one current build to install.
+      # Skipped for pull requests, which do not carry write permission.
+      - name: Publish the latest build
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: dev
+          name: Dernier build
+          prerelease: true
+          files: Idle-debug.apk
+          body: |
+            Build automatique de `${{ github.ref_name }}` — commit ${{ github.sha }}.
+
+            Téléchargez `Idle-debug.apk` ci-dessous depuis votre téléphone.
+            Le mode d'emploi est dans [INSTALL.md](https://github.com/${{ github.repository }}/blob/main/INSTALL.md) —
+            lisez en particulier la section sur les **paramètres restreints**, sans laquelle
+            le service d'accessibilité ne peut pas être activé.

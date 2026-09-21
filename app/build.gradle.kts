@@ -26,6 +26,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        getByName("debug") {
+            // A committed debug key, so every build signs identically and a new APK installs over
+            // the previous one instead of failing with "App not installed". Debug only: the
+            // release signing key never goes in the repository.
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
