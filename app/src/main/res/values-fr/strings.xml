@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Idle</string>
+
+    <!-- Navigation -->
+    <string name="nav_periods">Périodes</string>
+    <string name="nav_timers">Minuteurs</string>
+    <string name="nav_settings">Réglages</string>
+
+    <!-- Commun -->
+    <string name="action_save">Enregistrer</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_back">Retour</string>
+    <string name="action_done">Terminé</string>
+    <string name="rule_locked">Verrouillé tant que la règle est en cours. Déverrouillez-la pour la modifier.</string>
+    <plurals name="app_count">
+        <item quantity="one">%d application</item>
+        <item quantity="many">%d applications</item>
+        <item quantity="other">%d applications</item>
+    </plurals>
+
+    <!-- Édition d\'une règle -->
+    <string name="rule_name_label">Nom</string>
+    <string name="rule_name_placeholder_period">Nuit</string>
+    <string name="rule_name_placeholder_timer">Vidéo</string>
+    <string name="rule_apps_label">Applications</string>
+    <string name="rule_apps_none">Choisir des applications</string>
+    <string name="rule_unlock_label">Méthode de déverrouillage</string>
+    <string name="rule_unlock_none">Choisir une méthode</string>
+    <string name="rule_unlock_required">Chaque règle exige une méthode de déverrouillage. Créez-en une dans les réglages.</string>
+    <string name="rule_days_label">Jours</string>
+    <string name="rule_start_label">De</string>
+    <string name="rule_end_label">À</string>
+    <string name="rule_crosses_midnight">Se poursuit jusqu\'au lendemain matin.</string>
+    <string name="rule_limit_label">Limite quotidienne</string>
+    <string name="rule_limit_value">%1$s par jour</string>
+    <string name="new_period_title">Nouvelle période</string>
+    <string name="edit_period_title">Modifier la période</string>
+    <string name="new_timer_title">Nouveau minuteur</string>
+    <string name="edit_timer_title">Modifier le minuteur</string>
+
+    <!-- Sélecteur d\'applications -->
+    <string name="app_picker_title">Choisir des applications</string>
+    <string name="app_picker_search">Rechercher une application</string>
+    <plurals name="app_picker_selected">
+        <item quantity="one">%d sélectionnée</item>
+        <item quantity="many">%d sélectionnées</item>
+        <item quantity="other">%d sélectionnées</item>
+    </plurals>
+
+    <!-- Formats de durée et d\'heure -->
+    <string name="duration_hours_minutes">%1$d h %2$02d</string>
+    <string name="duration_hours">%1$d h</string>
+    <string name="duration_minutes">%1$d min</string>
+    <string name="time_range">%1$s – %2$s</string>
+    <string name="every_day">Tous les jours</string>
+    <string name="weekdays">En semaine</string>
+    <string name="weekends">Le week-end</string>
+    <string name="timer_progress">%1$s sur %2$s utilisés</string>
+    <string name="timer_spent">Quota épuisé</string>
+    <string name="rule_disabled">Désactivée</string>
+
+    <!-- Périodes -->
+    <string name="periods_title">Périodes</string>
+    <string name="periods_empty_title">Aucune période</string>
+    <string name="periods_empty_body">Bloquez des applications sur des plages horaires — par exemple les réseaux sociaux de 22 h à 7 h.</string>
+    <string name="periods_add">Nouvelle période</string>
+
+    <!-- Minuteurs -->
+    <string name="timers_title">Minuteurs</string>
+    <string name="timers_empty_title">Aucun minuteur</string>
+    <string name="timers_empty_body">Limitez le temps quotidien passé sur un groupe d\'applications — par exemple 2 h de vidéo.</string>
+    <string name="timers_add">Nouveau minuteur</string>
+
+    <!-- Réglages -->
+    <string name="settings_title">Réglages</string>
+    <string name="settings_appearance">Apparence</string>
+    <string name="theme_system">Suivre le système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="settings_blocking">Blocage</string>
+    <string name="settings_unlock_duration">Durée de déverrouillage</string>
+    <string name="settings_unlock_duration_summary">Temps pendant lequel une application reste utilisable après un déverrouillage.</string>
+    <string name="settings_unlock_duration_locked">Verrouillé tant qu\'une règle est en cours.</string>
+    <string name="settings_unlock_methods">Méthodes de déverrouillage</string>
+    <string name="settings_unlock_methods_summary">Codes QR, tags NFC et lieux qui lèvent un blocage.</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_about_summary">Gratuit, sans publicité, sans suivi. Rien ne quitte votre téléphone.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Idle</string>
+    <string name="onboarding_welcome_body">Posez vos propres limites, et faites en sorte que les lever demande un vrai geste : scanner un code, approcher un tag, ou se déplacer quelque part.</string>
+    <string name="onboarding_usage_title">Statistiques d\'utilisation</string>
+    <string name="onboarding_usage_body">Idle a besoin de l\'accès aux statistiques pour savoir combien de temps vous avez passé dans une application aujourd\'hui. Sans cela, les limites quotidiennes ne peuvent pas être décomptées.</string>
+    <string name="onboarding_accessibility_title">Savoir quelle application est ouverte</string>
+    <string name="onboarding_accessibility_body">Pour afficher l\'écran de blocage au bon moment, Idle utilise un service d\'accessibilité. Il lit une seule chose : le nom de l\'application que vous venez d\'ouvrir.</string>
+    <string name="onboarding_accessibility_detail">Il ne peut pas lire ce qui est affiché, ce que vous tapez, ni le contenu de vos applications. Rien n\'est conservé en dehors de vos propres règles, et rien n\'est jamais envoyé nulle part : Idle n\'a même pas la permission d\'accéder à internet.</string>
+    <string name="onboarding_accessibility_consent">J\'ai compris et j\'accepte</string>
+    <string name="onboarding_notifications_title">Notifications</string>
+    <string name="onboarding_notifications_body">Pendant qu\'une application minutée est ouverte, Idle affiche une notification persistante. Android l\'exige pour que le décompte continue.</string>
+    <string name="onboarding_done_title">C\'est prêt</string>
+    <string name="onboarding_done_body">Créez une méthode de déverrouillage, puis votre première période ou votre premier minuteur.</string>
+    <string name="onboarding_open_settings">Ouvrir les réglages Android</string>
+    <string name="onboarding_next">Suivant</string>
+    <string name="onboarding_skip">Plus tard</string>
+    <string name="onboarding_start">Commencer</string>
+    <string name="onboarding_granted">Accordé</string>
+
+    <!-- État des permissions -->
+    <string name="settings_permissions">Permissions</string>
+    <string name="permission_usage_access">Accès aux statistiques</string>
+    <string name="permission_accessibility">Service d\'accessibilité</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="permission_status_granted">Accordée</string>
+    <string name="permission_status_missing">Manquante</string>
+    <string name="permission_accessibility_off_warning">Le service d\'accessibilité est désactivé : plus rien n\'est bloqué.</string>
+
+    <!-- Service d\'accessibilité -->
+    <string name="accessibility_service_description">Idle utilise ce service pour savoir quelle application vient d\'être ouverte, afin d\'afficher l\'écran de blocage pour celles que vous avez choisi de limiter. Il ne lit que le nom de l\'application, jamais ce qui est affiché, et rien ne quitte votre téléphone.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_timers">Minuteurs</string>
+    <string name="notification_counting_title">Décompte en cours</string>
+    <string name="notification_counting_body">Une application minutée est ouverte.</string>
+
+    <!-- Écran de blocage -->
+    <string name="block_title">Bloqué</string>
+    <string name="block_reason_period">%1$s est bloquée jusqu\'à %2$s.</string>
+    <string name="block_reason_timer">Vous avez utilisé vos %1$s de %2$s aujourd\'hui.</string>
+    <string name="block_unlock">Déverrouiller avec %1$s</string>
+    <string name="block_unlock_generic">Déverrouiller</string>
+    <string name="block_emergency">Urgence — %1$d min restantes aujourd\'hui</string>
+    <string name="block_emergency_spent">Plus de temps d\'urgence aujourd\'hui</string>
+    <string name="block_emergency_confirm">Utiliser votre temps d\'urgence restant ?</string>
+    <string name="block_close">Fermer l\'application</string>
+    <string name="block_scan_again">Rescannez le code</string>
+    <string name="block_tap_again">Réapprochez le tag</string>
+    <string name="block_go_to_place">Rendez-vous à %1$s et réessayez</string>
+    <string name="block_check_place">Vérifier ma position</string>
+    <string name="block_wrong_code">Ce n\'est pas le bon code.</string>
+    <string name="block_wrong_tag">Ce n\'est pas le bon tag.</string>
+    <string name="block_out_of_area">Vous n\'êtes pas au bon endroit.</string>
+    <string name="block_method_broken">Cette méthode est incomplète. Modifiez-la dans les réglages.</string>
+
+    <!-- Méthodes de déverrouillage -->
+    <string name="unlock_methods_title">Méthodes de déverrouillage</string>
+    <string name="unlock_methods_empty_title">Aucune méthode</string>
+    <string name="unlock_methods_empty_body">Une méthode est ce qui lève un blocage : un QR code sur le frigo, un tag sur le bureau, ou un lieu où il faut se rendre.</string>
+    <string name="unlock_methods_add">Nouvelle méthode</string>
+    <string name="unlock_method_in_use">Utilisée par une règle</string>
+    <string name="unlock_type_qr">QR code ou code-barres</string>
+    <string name="unlock_type_qr_summary">Scannez un code pour l\'enregistrer, rescannez-le pour déverrouiller.</string>
+    <string name="unlock_type_nfc">Tag NFC</string>
+    <string name="unlock_type_nfc_summary">Approchez un tag pour l\'enregistrer, réapprochez-le pour déverrouiller.</string>
+    <string name="unlock_type_location">Lieu</string>
+    <string name="unlock_type_location_summary">Le déverrouillage n\'est possible que dans une zone que vous choisissez.</string>
+    <string name="new_method_title">Nouvelle méthode</string>
+    <string name="method_name_label">Nom</string>
+    <string name="method_name_placeholder">QR sur le frigo</string>
+    <string name="method_capture_qr">Visez le code avec la caméra</string>
+    <string name="method_capture_qr_done">Code enregistré</string>
+    <string name="method_capture_nfc">Maintenez le tag contre le dos du téléphone</string>
+    <string name="method_capture_nfc_done">Tag enregistré</string>
+    <string name="method_capture_location">Enregistrer ce lieu</string>
+    <string name="method_capture_location_done">Lieu enregistré</string>
+    <string name="method_radius">Rayon : %1$d m</string>
+    <string name="method_locating">Recherche de votre position…</string>
+    <string name="permission_camera_rationale">Idle a besoin de la caméra pour lire le code. L\'image n\'est jamais enregistrée et ne quitte jamais votre téléphone.</string>
+    <string name="permission_location_rationale">Idle a besoin de votre position une seule fois, pour enregistrer le lieu. Elle reste sur votre téléphone et n\'est envoyée nulle part.</string>
+    <string name="permission_grant">Autoriser</string>
+    <string name="permission_denied">Permission refusée. Vous pouvez l\'accorder dans les réglages Android.</string>
+    <string name="nfc_unavailable">Ce téléphone n\'a pas de puce NFC.</string>
+    <string name="nfc_disabled">Le NFC est désactivé. Activez-le dans les réglages Android.</string>
+</resources>
