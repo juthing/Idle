@@ -3,8 +3,9 @@
 Aucun outil à installer sur l'ordinateur. GitHub compile l'application à chaque modification du
 code et publie un fichier `.apk` que le téléphone télécharge et installe directement.
 
-Comptez dix minutes la première fois, dont la moitié à cause d'une protection Android décrite plus
-bas — c'est l'étape où tout le monde se bloque.
+Comptez dix minutes la première fois. L'essentiel de ce temps part dans deux protections Android
+qui vont toutes les deux se mettre en travers — sections 3 et 4. Elles sont attendues, elles ne
+signalent aucun problème avec l'application, et aucune des deux ne se contourne en insistant.
 
 ---
 
@@ -35,7 +36,31 @@ Le chemin manuel, si le message n'apparaît pas :
 **Paramètres → Applications → Accès spécial → Installer des applications inconnues**, puis
 choisissez votre navigateur.
 
-## 3. ⚠️ Les paramètres restreints — l'étape qui bloque tout le monde
+## 3. Play Protect refuse l'installation — c'est normal
+
+Au moment d'installer, Play Protect affiche **« Appli bloquée pour protéger votre appareil »**, avec
+pour seul bouton **OK**. Ce n'est pas un défaut d'Idle et ce n'est pas contournable en insistant.
+
+Play Protect bloque automatiquement toute application installée hors Play Store qui déclare un
+**service d'accessibilité**, parce que c'est la permission la plus détournée par les logiciels
+malveillants bancaires. Idle en déclare un — c'est le cœur de son fonctionnement — donc le blocage
+se produira à chaque nouvelle installation.
+
+La seule sortie est de suspendre l'analyse le temps d'installer :
+
+1. Ouvrez le **Play Store**
+2. Touchez votre **photo de profil**, en haut à droite
+3. **Play Protect**
+4. Icône **⚙️** en haut à droite
+5. Désactivez **« Analyser les applis avec Play Protect »**
+   (sur les versions récentes du Play Store, un bouton **Pause** fait la même chose et se réactive
+   tout seul — préférez-le)
+6. Retournez sur le fichier `Idle-debug.apk` et relancez l'installation
+7. **Réactivez l'analyse** une fois l'installation terminée
+
+Play Protect pourra proposer plus tard de supprimer Idle : refusez, l'application reste en place.
+
+## 4. ⚠️ Les paramètres restreints — l'étape qui bloque tout le monde
 
 **Sans cette étape, Idle ne bloque rien du tout.**
 
@@ -60,7 +85,7 @@ Le libellé change selon le constructeur — « Paramètres restreints », « Au
 restreints », « Allow restricted settings ». Le menu ⋮ de la fiche de l'application est toujours
 le bon endroit.
 
-## 4. L'accès aux statistiques d'usage
+## 5. L'accès aux statistiques d'usage
 
 Nécessaire pour les minuteurs : sans lui, Idle ne sait pas combien de temps vous avez passé dans
 une application aujourd'hui.
@@ -69,7 +94,7 @@ une application aujourd'hui.
 
 L'onboarding d'Idle propose un bouton qui ouvre directement cet écran.
 
-## 5. Vérifier que tout fonctionne
+## 6. Vérifier que tout fonctionne
 
 L'écran **Réglages** d'Idle liste les trois permissions avec leur état. Si le service
 d'accessibilité est désactivé, un avertissement rouge s'affiche en haut de l'écran : plus rien
@@ -86,9 +111,9 @@ Premier test, avec une application dont vous vous moquez :
 5. Attendez quinze minutes et rouvrez-la : elle est bloquée à nouveau.
 
 Si l'étape 3 ne se produit pas, le service d'accessibilité n'est pas actif — revenez à la
-section 3.
+section 4.
 
-## 6. Mettre à jour
+## 7. Mettre à jour
 
 À chaque modification du code poussée sur GitHub, un nouveau build est publié au même endroit.
 Retéléchargez `Idle-debug.apk` et installez-le par-dessus : vos règles, vos méthodes et vos
@@ -104,8 +129,11 @@ désinstallation complète — donc la perte de toutes vos règles — à chaque
 La version déjà présente a été signée avec une autre clé. Désinstallez Idle, puis réinstallez.
 Cela n'arrive normalement qu'une seule fois, en passant d'un APK bâti avant cette mise en place.
 
+**Play Protect bloque de nouveau à la mise à jour**
+Même cause qu'à la première installation, même solution : section 3.
+
 **La bascule d'accessibilité est grise**
-C'est la restriction de la section 3. Il faut d'abord tenter de l'activer pour que l'option
+C'est la restriction de la section 4. Il faut d'abord tenter de l'activer pour que l'option
 « Autoriser les paramètres restreints » apparaisse dans le menu ⋮ de la fiche de l'application.
 
 **Le service d'accessibilité se coupe tout seul**
