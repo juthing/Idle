@@ -55,21 +55,48 @@ jobs:
           name: Idle-debug-apk
           path: Idle-debug.apk
 
+      # Reusing the "dev" release keeps one current build to install, but it also makes the
+      # release page lie about its age: GitHub shows the date the release was first published,
+      # never the date its files changed. A build minutes old therefore reads as hours old.
+      # Stamping the title with the build time is what makes the page answer the only question
+      # anyone asks it — is this the latest one?
+      - name: Stamp the build
+        if: github.event_name != 'pull_request'
+        id: stamp
+        run: |
+          echo "when=$(date -u '+%d/%m/%Y %H:%M UTC')" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      # The release action never moves a tag that already exists, so without this the "dev" tag
+      # keeps pointing at whatever commit created it — the release would offer a fresh APK while
+      # its "source code" links handed out months-old sources.
+      - name: Point the dev tag at this commit
+        if: github.event_name != 'pull_request'
+        run: |
+          git tag --force dev
+          git push --force origin refs/tags/dev
+
       # The release is the one a phone can actually use: a direct .apk link, no zip, no sign-in
-      # dance. The "dev" tag is reused, so there is always exactly one current build to install.
-      # Skipped for pull requests, which do not carry write permission.
+      # dance. Skipped for pull requests, which do not carry write permission.
       - name: Publish the latest build
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: dev
-          name: Dernier build
+          name: Build du ${{ steps.stamp.outputs.when }} (${{ steps.stamp.outputs.short_sha }})
+          target_commitish: ${{ github.sha }}
           prerelease: true
           files: Idle-debug.apk
           body: |
-            Build automatique de `${{ github.ref_name }}` — commit ${{ github.sha }}.
+            **Construit le ${{ steps.stamp.outputs.when }}** depuis `${{ github.ref_name }}`,
+            commit ${{ github.sha }}.
+
+            > La date affichée à côté du titre de la release est celle de sa *première*
+            > publication et ne bouge jamais. La seule date qui compte est celle ci-dessus.
 
             Téléchargez `Idle-debug.apk` ci-dessous depuis votre téléphone.
             Le mode d'emploi est dans [INSTALL.md](https://github.com/${{ github.repository }}/blob/main/INSTALL.md) —
-            lisez en particulier la section sur les **paramètres restreints**, sans laquelle
-            le service d'accessibilité ne peut pas être activé.
+            lisez en particulier les sections sur les **paramètres restreints** et sur la
+            **superposition à d'autres applications** : sans la première, le service
+            d'accessibilité ne peut pas être activé ; sans la seconde, l'écran de blocage ne
+            s'affiche qu'une fois sur deux.
