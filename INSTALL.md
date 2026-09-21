@@ -85,7 +85,27 @@ Le libellé change selon le constructeur — « Paramètres restreints », « Au
 restreints », « Allow restricted settings ». Le menu ⋮ de la fiche de l'application est toujours
 le bon endroit.
 
-## 5. L'accès aux statistiques d'usage
+## 5. ⚠️ La superposition à d'autres applications
+
+**Sans cette étape non plus, Idle ne bloque rien — ou plutôt, il bloque par intermittence, ce qui
+est pire.**
+
+Android interdit à une application de s'afficher par-dessus une autre depuis l'arrière-plan.
+Faire tourner un service d'accessibilité ne fait *pas* partie des exemptions ; la permission
+« superposition à d'autres applications », si. Sans elle, Idle voit bien qu'une application
+bloquée vient de s'ouvrir, puis le système jette l'écran de blocage sans le moindre message.
+
+Le symptôme est déroutant : ça marche juste après avoir ouvert Idle, puis plus du tout. C'est le
+court délai de grâce qu'Android accorde à une application qui vient d'être au premier plan.
+
+**Paramètres → Applications → Accès spécial → Superposition à d'autres applications → Idle →
+activer.**
+
+L'onboarding propose un bouton qui ouvre directement cet écran, et la page **Réglages →
+Permissions** indique si elle manque. Idle ne dessine jamais de fenêtre par-dessus quoi que ce
+soit : la permission ne sert qu'à avoir le droit d'afficher son propre écran de blocage.
+
+## 6. L'accès aux statistiques d'usage
 
 Nécessaire pour les minuteurs : sans lui, Idle ne sait pas combien de temps vous avez passé dans
 une application aujourd'hui.
@@ -94,11 +114,11 @@ une application aujourd'hui.
 
 L'onboarding d'Idle propose un bouton qui ouvre directement cet écran.
 
-## 6. Vérifier que tout fonctionne
+## 7. Vérifier que tout fonctionne
 
-L'écran **Réglages** d'Idle liste les trois permissions avec leur état. Si le service
-d'accessibilité est désactivé, un avertissement rouge s'affiche en haut de l'écran : plus rien
-n'est bloqué tant qu'il est là.
+La page **Réglages → Permissions** liste tout ce dont Idle a besoin, avec son état. Tant qu'il
+manque le service d'accessibilité ou la superposition, un bandeau rouge s'affiche en haut des
+Réglages : plus rien n'est bloqué tant qu'il est là.
 
 Premier test, avec une application dont vous vous moquez :
 
@@ -106,14 +126,19 @@ Premier test, avec une application dont vous vous moquez :
    code-barres — celui d'un paquet de céréales fait très bien l'affaire — et donnez-lui un nom.
 2. **Périodes → Nouvelle période**, choisissez l'application de test, cochez le jour, réglez une
    plage horaire qui couvre l'instant présent, sélectionnez votre méthode, enregistrez.
-3. Ouvrez l'application de test : l'écran de blocage doit apparaître.
-4. Touchez **Déverrouiller**, rescannez le même code-barres : l'application s'ouvre.
+3. Verrouillez le téléphone, déverrouillez-le, puis ouvrez l'application de test depuis l'écran
+   d'accueil — sans repasser par Idle : l'écran de blocage doit apparaître.
+4. Rescannez le même code-barres : l'application s'ouvre.
 5. Attendez quinze minutes et rouvrez-la : elle est bloquée à nouveau.
 
-Si l'étape 3 ne se produit pas, le service d'accessibilité n'est pas actif — revenez à la
-section 4.
+Le détour par l'écran d'accueil de l'étape 3 n'est pas une coquetterie : lancer l'application de
+test directement après avoir quitté Idle passerait par le délai de grâce d'Android et masquerait
+une permission de superposition manquante.
 
-## 7. Mettre à jour
+Si l'écran de blocage n'apparaît pas et qu'une notification dit qu'Idle n'a pas pu l'afficher,
+c'est la section 5. Si rien ne se passe du tout, c'est la section 4.
+
+## 8. Mettre à jour
 
 À chaque modification du code poussée sur GitHub, un nouveau build est publié au même endroit.
 Retéléchargez `Idle-debug.apk` et installez-le par-dessus : vos règles, vos méthodes et vos
@@ -131,6 +156,11 @@ Cela n'arrive normalement qu'une seule fois, en passant d'un APK bâti avant cet
 
 **Play Protect bloque de nouveau à la mise à jour**
 Même cause qu'à la première installation, même solution : section 3.
+
+**L'écran de blocage apparaît une fois sur deux**
+C'est la permission de superposition, section 5. Idle n'a le droit de s'afficher par-dessus une
+autre application que pendant quelques secondes après être passé au premier plan ; en dehors de
+cette fenêtre, Android refuse en silence.
 
 **La bascule d'accessibilité est grise**
 C'est la restriction de la section 4. Il faut d'abord tenter de l'activer pour que l'option
